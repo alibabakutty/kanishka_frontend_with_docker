@@ -53,8 +53,8 @@ const GatewayPage = () => {
     },
     {
       section: 'VOUCHERS', links: [
-        { label: 'Kanishka Purchase Order', hotkey: 'K' },
-        { label: 'DayBook', hotkey: 'D' },
+        // { label: 'Kanishka Purchase Order', hotkey: 'K' },
+        { label: 'Purchase Order Register', hotkey: 'P' },
       ]
     },
   ];
