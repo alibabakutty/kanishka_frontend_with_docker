@@ -54,7 +54,7 @@ const GatewayPage = () => {
     {
       section: 'VOUCHERS', links: [
         // { label: 'Kanishka Purchase Order', hotkey: 'K' },
-        { label: 'Purchase Order Register', hotkey: 'P' },
+        { label: 'Purchase Order Register', hotkey: 'P', path: '/purchase_order' },
       ]
     },
   ];
@@ -103,7 +103,7 @@ const GatewayPage = () => {
                 </h3>
                 <ul className="space-y-1">
                   {group.links.map((link, i) => (
-                    <li key={i} className="text-[#003366] text-sm font-semibold hover:bg-yellow-100 cursor-pointer py-0.5">
+                    <li key={i} onClick={() => link.path && navigate(link.path)} className="text-[#003366] text-sm font-semibold hover:bg-yellow-100 cursor-pointer py-0.5">
                       <span className="underline decoration-1 underline-offset-2">{link.hotkey}</span>
                       {link.label.substring(1)}
                     </li>
