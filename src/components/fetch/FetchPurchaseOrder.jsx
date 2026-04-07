@@ -58,6 +58,14 @@ const FetchPurchaseOrder = () => {
     return `${day}-${month}-${year}`;
   }
 
+  const formatINR = (val) => {
+    if (val === undefined || val === null) return "0.00";
+    return val.toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+  };
+
   if (loading) return <div className='p-4 text-center'>Loading orders...</div>;
   if (error) return <div className='p-4 text-red-500 text-center'>Error: {error}</div>
 
@@ -127,7 +135,7 @@ const FetchPurchaseOrder = () => {
                   <td className="px-1 py-0.5 text-center">{formatDate(order.voucherDate)}</td>
                   <td className="px-1 py-0.5">{order.partyLedgerName}</td>
                   <td className="px-1 py-0.5 text-right font-medium">
-                    <span className="mr-1">₦</span> {order.totalAmount}
+                    <span className="mr-1">₹</span> {formatINR(order.totalAmount)}
                   </td>
                   <td className="px-1 py-0.5 text-center">{"Pending"}</td>
                   <td className="px-1 py-0.5 text-center">{"Pending"}</td>
