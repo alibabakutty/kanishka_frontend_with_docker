@@ -1,4 +1,3 @@
-import SelectArea from './SelectArea';
 import { useEffect, useState } from 'react';
 
 const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
@@ -6,19 +5,9 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 	const [selectIndex, setSelectIndex] = useState(0);
 	const [date, setDate] = useState({
 		startDate: '',
-		day:''
+		day: ''
 	})
-	const [customerName] = useState([
-		{ label: 'Ramco' },
-		{ label: 'Coramandal' },
-		{ label: 'Tnpl Ltd' },
-		{ label: 'JSWD' },
-		{ label: 'ASDF' },
-		{ label: 'QWER' },
-		{ label: 'ZXCV' },
-		{ label: 'HJKL' },
-		{ label: 'UIOP' },
-	]);
+	const [customerName] = useState([]);
 	const [filteredCustomer, setFilteredCustomer] = useState(customerName);
 
 	const handleChange = (e) => {
@@ -38,87 +27,69 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 		}
 	};
 
-	const handleFocus = (value) => {
-		setShowCustomer(true);
 
-		// Reset the filtered list to the full list of customers
-		setFilteredCustomer(customerName);
-
-		if (value) {
-			// Find the index based on the input value before resetting
-			const index = customerName.findIndex((item) =>
-				item.label.toLowerCase().includes(value.toLowerCase())
-			);
-			// Set the select index to the matching customer or 0 if no match
-			setSelectIndex(index !== -1 ? index : 0);
-		} else {
-			// If no value, set the index to the first item
-			setSelectIndex(0);
-		}
-	};
-	useEffect(()=>{
-		setTimeout(() => { 
+	useEffect(() => {
+		setTimeout(() => {
 			inputRefs.current[0]?.focus();
-		inputRefs.current[0]?.setSelectionRange(0,0);
-
-		}, 0)
-		dateFormatter()
-		
-	},[])
-	const dateFormatter = (inputdate) => {
-	const monthsShort = [
-		'Jan',
-		'Feb',
-		'Mar',
-		'Apr',
-		'May',
-		'Jun',
-		'Jul',
-		'Aug',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dec',
-	];
-	const parseDate = (dateString) => {
-		const parts = dateString.split(/[-./]/);
-		let day, month, year;
-
-		if (parts.length === 3) {
-			day = Number(parts[0]);
-			if (isNaN(parts[1])) {
-				month = monthsShort.indexOf(
-					parts[1].charAt(0).toUpperCase() + parts[1].slice(1, 3).toLowerCase()
-				);
-			} else {
-				month = Number(parts[1]) - 1;
-			}
-			year = parts[2].length == 2 ? 2000 + Number(parts[2]) : Number(parts[2]);
+			inputRefs.current[0]?.setSelectionRange(0, 0);
+		}, 0);
+		// call formatter with the fetched data if it exists
+		if (data.voucherDate) {
+			dateFormatter(data.voucherDate);
 		} else {
-			return new Date();
+			dateFormatter()
 		}
-		return new Date(year, month, day);
+
+	}, [data.voucherDate]);
+
+	const dateFormatter = (inputdate) => {
+		const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+		const parseDate = (dateString) => {
+			if (!dateString) return new Date();
+
+			// Try parsing standard ISO format (YYYY-MM-DD) first
+			const standardDate = new Date(dateString);
+			if (!isNaN(standardDate.getTime())) return standardDate;
+
+			// Fallback to your custom dash/dot/slash logic
+			const parts = dateString.split(/[-./]/);
+			if (parts.length === 3) {
+				let day = Number(parts[0]);
+				let month = isNaN(parts[1])
+					? monthsShort.indexOf(parts[1].charAt(0).toUpperCase() + parts[1].slice(1, 3).toLowerCase())
+					: Number(parts[1]) - 1;
+				let year = parts[2].length === 2 ? 2000 + Number(parts[2]) : Number(parts[2]);
+				return new Date(year, month, day);
+			}
+			return new Date();
+		};
+
+		const currentDate = parseDate(inputdate);
+
+		let d = String(currentDate.getDate());
+		let m = monthsShort[currentDate.getMonth()];
+		let y = String(currentDate.getFullYear()).slice(2);
+
+		// Update the visual state (DD-MMM-YY)
+		setDate((prev) => ({ ...prev, startDate: `${d}-${m}-${y}` }));
+
+		// Update the Day Name
+		getDayName(currentDate);
+
+		// Update the parent data ONLY if it's different to avoid infinite loops
+		const dateStamp = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+		if (data.voucherDate !== dateStamp) {
+			setData((prevData) => ({ ...prevData, voucherDate: dateStamp }));
+		}
 	};
 
-	const currentDate = inputdate ? parseDate(inputdate) : new Date();
-
-	let day = String(currentDate.getDate()); // Get day and ensure it's 2 digits
-	let month = monthsShort[currentDate.getMonth()]; // Get month name
-	let year = String(currentDate.getFullYear()).slice(2);
-	setDate((prev) => ({ ...prev, startDate: `${day}-${month}-${year}` }));
-	const dateStamp = `${currentDate.getFullYear()}-${
-		currentDate.getMonth() + 1
-	}-${currentDate.getDate()}`;
-
-	setData((prevData) => ({ ...prevData, voucherDate: dateStamp }));
-	getDayName(`${day}-${month}-${year}`);
-	setData((prevData) => ({ ...prevData, voucherType: title }));
-	};
-	const getDayName = (item) => {
+	const getDayName = (dateObj) => {
 		const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-		const today = new Date(item).getDay();
-		setDate((prev) => ({...prev, day:daysOfWeek[today]}))
+		const dayIndex = dateObj.getDay();
+		setDate((prev) => ({ ...prev, day: daysOfWeek[dayIndex] }));
 	};
+
 	const handleSelect = (e, data) => {
 		if (selectIndex < filteredCustomer.length) {
 			if (e.key === 'ArrowUp' && selectIndex > 0) {
@@ -167,7 +138,8 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 						{title}
 					</label>
 					<span className="text-[14px] font-semibold">
-						&nbsp;No.&nbsp;&nbsp;1
+						{/* &nbsp;No.&nbsp;&nbsp;1 */}
+						<input type="text" />
 					</span>
 				</div>
 
@@ -184,23 +156,17 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 						}
 						name="customerName"
 						autoComplete="off"
-						onChange={handleChange}
 						value={data.customerName}
 						type="text"
-						onKeyDown={(e) => handleSelect(e, filteredCustomer)}
-						onFocus={(e) => handleFocus(e.target.value)}
-						onBlur={() => setShowCustomer(false)}
-						id="custNo"
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								tableRefs.current[0]?.focus()
+								setSelectIndex(0)
+							}
+						}}
 						className="w-60 border border-transparent focus:bg-[#fee8af] focus:border-blue-500 text-[13px] pl-0.5 bg-transparent outline-0 font-semibold"
+						readOnly
 					/>
-					{ShowCustomer && (
-						<SelectArea
-							title={'List of Ledger Accounts'}
-							data={filteredCustomer}
-							selectIndex={selectIndex}
-							onHandle={updateData}
-						/>
-					)}
 				</div>
 
 				<div className="flex leading-4 px-1 my-0.5">

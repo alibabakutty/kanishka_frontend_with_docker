@@ -67,6 +67,7 @@ const SelectArea = ({ title, data, selectIndex, onHandle, extraParams }) => {
 									{item.stockItemCode && item.stockItemCode + ' - '}
 									{item.label || item.stockItemName}
 									{item.stockCategoryName}
+									{item.description}
 									{item.stockGroupName}
 									{item.unitSymbolName}
 									{item.godownName}

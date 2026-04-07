@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Title from "../utils/Title";
 import Header from "../utils/Header";
-import SelectArea from "../utils/SelectArea";
 import VoucherSub from "../utils/VoucherSub";
-import Footer from "../utils/Footer"; // Import the new Footer component
+import Footer from "../utils/Footer";
 import { useParams } from "react-router-dom";
 
 const PurchaseOrder = () => {
@@ -50,7 +49,7 @@ const PurchaseOrder = () => {
     const [narration, setNarration] = useState("");
     const [createdBy, setCreatedBy] = useState("");
     const [approvedBy, setApprovedBy] = useState("");
-    const [status, setStatus] = useState("");
+    const [status, setStatus] = useState("pending");
     const [stockItem] = useState([
         { productCode: "10001", label: "Aquafina 1L", quantity: 40 },
         { productCode: "10002", label: "Kinley 1L", quantity: 40 },
@@ -64,6 +63,62 @@ const PurchaseOrder = () => {
     const display = tableData.length > 1 ? [{ label: "♦ End of List" }, ...filteredStockItem] : filteredStockItem
     const [totalQuantity, setTotalQuantity] = useState("");
     const [totalAmount, setTotalAmount] = useState("");
+
+    useEffect(() => {
+        const fetchOrderData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`http://localhost:8080/api/v1/purchase-orders/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}`}
+                });
+
+                const data = response.data;
+                // map api
+                setHeaderData({
+                    customerName: data.partyLedgerName,
+                    voucherNo: data.voucherNumber,
+                    voucherDate: data.voucherDate,
+                    voucherType: data.voucherType,
+                    orderNo: data.orderNo
+                });
+                // map inventoryentries to your tabledata state
+                if (data.inventoryEntries && data.inventoryEntries.length > 0){
+                    const mapperTableData = data.inventoryEntries.map(entry => ({
+                        productCode: entry.itemName,
+                        description: entry.itemName,
+                        hsn: '',
+                        gst: '',
+                        dueOn: data.voucherDate,
+                        quantity: entry.billedQty,
+                        rate: entry.itemRate,
+                        uom: entry.itemUom,
+                        discount: "",
+                        amount: Math.abs(entry.itemAmount).toFixed(2),
+                        allocation: [
+                            {
+                                dueOn: data.voucherDate,
+                                location: "♦ Any",
+                                batchNo: "♦ Any",
+                                quantity: entry.billedQty,
+                                rate: entry.itemRate,
+                                uom: entry.itemUom,
+                                discount: "",
+                                amount: Math.abs(entry.itemAmount).toFixed(2),
+                            }
+                        ]
+                    }));
+                    setTableData(mapperTableData);
+                }
+            } catch (error) {
+                console.error('Failed to fetch order:', error);
+                alert("Error fetching order details")
+            }
+        };
+
+        if (id){
+            fetchOrderData();
+        }
+    }, [id]);
 
     const handleInputChange = (e, rowIndex) => {
         const { value, name } = e.target;
@@ -207,7 +262,7 @@ const PurchaseOrder = () => {
 
     const onSelected = (e, item, rowIndex) => {
         const updatedTable = [...tableData];
-        updatedTable[rowIndex].productCode = item.label;
+        updatedTable[rowIndex].description = item.label;
         setSelectionItem(item.label);
         if (item.label !== "♦ End of List") {
             setShowSubForm(true);
@@ -279,17 +334,14 @@ const PurchaseOrder = () => {
                                     <th className="w-11.25 text-center border border-slate-300">
                                         S.No
                                     </th>
-                                    <th className="w-17.5 text-center border border-slate-300">
-                                        Product Code
-                                    </th>
                                     <th className="w-105 text-center border border-slate-300">
-                                        Product Description
+                                        Product Name
                                     </th>
                                     <th className="w-17.5 text-center border border-slate-300">
                                         HSN
                                     </th>
                                     <th className="w-17.5 text-center border border-slate-300">
-                                        GST
+                                        GST %
                                     </th>
                                     <th className="w-15 text-center border border-slate-300">
                                         Due on
@@ -304,11 +356,11 @@ const PurchaseOrder = () => {
                                         Per
                                     </th>
                                     <th className="w-17.5 text-center border border-slate-300">
-                                        Discount
+                                        Discount %
                                     </th>
-                                    <th className="w-17.5 text-center border border-slate-300">
+                                    {/* <th className="w-17.5 text-center border border-slate-300">
                                         Tax %
-                                    </th>
+                                    </th> */}
                                     <th className="w-25.75 text-right border border-slate-300">
                                         Amount
                                     </th>
@@ -323,41 +375,32 @@ const PurchaseOrder = () => {
                                         <td className="text-center border border-slate-300 bg-white">
                                             {rowIndex + 1}
                                         </td>
-                                        <td className="text-center border border-slate-300 bg-white">
-                                            <input
-                                                ref={(input) =>
-                                                    (tableRefs.current[rowIndex * 2 + 0] = input)
-                                                }
-                                                onChange={(e) => handleInputChange(e, rowIndex)}
-                                                type="text"
+                                        <td className="border border-slate-300 bg-white">
+                                            <input 
+                                                type="text" 
+                                                ref={(input) => (tableRefs.current[rowIndex * 2 + 0] = input)}
                                                 className="w-full outline-0 focus:bg-amber-300"
-                                                name="productCode"
-                                                value={item.productCode}
-                                                onKeyDown={(e) => handleSelect(e, display, rowIndex)}
+                                                name="item.description"
+                                                value={item.description}  
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        setShowSubForm(true)
+                                                    }
+                                                }}
                                                 onFocus={() => {
                                                     setShowProduct(true);
                                                     setFocusedRow(rowIndex);
                                                 }}
                                                 onBlur={() => setShowProduct(false)}
                                             />
-                                            {showProduct && (
-                                                <SelectArea
-                                                    title="List of Stock Items"
-                                                    selectIndex={selectedProduct}
-                                                    data={display}
-                                                    onHandle={onSelected}
-                                                    extraParams={rowIndex}
-                                                />
-                                            )}
-                                        </td>
-                                        <td className="border border-slate-300 bg-white">
-                                            {item.description}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
-                                            {item.hsn}
+                                            {/* {item.hsn} */}
+                                            { "Null" }
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
-                                            {item.gst ? item.gst + ' %' : ''}
+                                            {/* {item.gst ? item.gst + ' %' : ''} */}
+                                            { "Null" }
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.dueOn}
@@ -372,10 +415,8 @@ const PurchaseOrder = () => {
                                             {item.uom}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
-                                            {item.discount ? item.discount + ' %' : ''}
-                                        </td>
-                                        <td className="text-center border border-slate-300 bg-white">
-                                            {item.tax ? item.tax + ' %' : ''}
+                                            {/* {item.discount ? item.discount + ' %' : ''} */}
+                                            { "Null" }
                                         </td>
                                         <td className="border border-slate-300 bg-white cursor-default">
                                             <input
@@ -388,7 +429,7 @@ const PurchaseOrder = () => {
                                                     (tableRefs.current[rowIndex * 2 + 1] = input)
                                                 }
                                                 onKeyDown={(e) => handleKeyDown(e, rowIndex, 1)}
-                                                readOnly
+                                                // readOnly
                                             />
                                         </td>
                                     </tr>

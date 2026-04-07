@@ -37,7 +37,7 @@ const Footer = ({
                             }
                         }
                     }}
-                    className="h-5 text-[13px] resize-none focus:bg-[#fee8af] overflow-hidden outline-0 focus:border focus:border-blue-400 w-137.5 bg-transparent"
+                    className="h-5 text-[13px] resize-none focus:bg-[#fee8af] overflow-hidden outline-0 focus:border focus:border-blue-400 w-100 bg-transparent"
                     rows={1}
                 />
             </div>
@@ -46,7 +46,7 @@ const Footer = ({
                     <label className="text-[14px]" htmlFor="createdBy">
                         Created By
                     </label>
-                    <span className="mr-0.5">:</span>
+                    <span className="mr-1">:</span>
                     <input 
                         type="text" 
                         id="createdBy"
@@ -56,10 +56,10 @@ const Footer = ({
                     />
                 </div>
                 <div>
-                    <label className="text-[14px]" htmlFor="approvedBy">
+                    <label className="text-[14px] ml-1" htmlFor="approvedBy">
                         Approved By
                     </label>
-                    <span className="mr-0.5">:</span>
+                    <span className="mr-1">:</span>
                     <input 
                         type="text" 
                         id="approvedBy"
@@ -69,16 +69,29 @@ const Footer = ({
                     />
                 </div>
                 <div>
-                    <label className="text-[14px]" htmlFor="status">
-                        Status
+                    <label className="text-[14px] ml-1" htmlFor="status">
+                        Tally Status
                     </label>
-                    <span className="mr-0.5">:</span>
+                    <span className="mr-1">:</span>
                     <input 
                         type="text" 
                         id="status"
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
-                        className="w-37.5 h-5 resize-none focus:bg-[#fee8af] overflow-hidden outline-0 focus:border focus:border-blue-400 bg-transparent" 
+                        className="w-24 h-5 resize-none focus:bg-[#fee8af] overflow-hidden outline-0 focus:border focus:border-blue-400 bg-transparent capitalize font-semibold" 
+                    />
+                </div>
+                <div>
+                    <label className="text-[14px] ml-1" htmlFor="status">
+                        Tab Status
+                    </label>
+                    <span className="mr-1">:</span>
+                    <input 
+                        type="text" 
+                        id="status"
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-24 h-5 resize-none focus:bg-[#fee8af] overflow-hidden outline-0 focus:border focus:border-blue-400 bg-transparent capitalize font-semibold" 
                     />
                 </div>
             </div>

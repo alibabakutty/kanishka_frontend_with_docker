@@ -353,9 +353,6 @@ const VoucherSub = ({
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 1] = el)
 														}
-														onChange={(e) =>
-															handleInputChange(e, allocateIndex)
-														}
 														onFocus={() => {
 															setShowLocation(true);
 															setFocusedRow(allocateIndex);
@@ -363,16 +360,8 @@ const VoucherSub = ({
 														onKeyDown={(e) =>
 															handleLocationSelect(e, allocateIndex)
 														}
+														readOnly
 													/>
-													{showLocation && (
-														<SelectArea
-															title="List of Locations"
-															data={filteredLocation}
-															selectIndex={selectedLocation}
-															onHandle={handleLocation}
-															extraParams={focusedRow}
-														/>
-													)}
 												</td>
 												<td className="border border-slate-300">
 													<input
@@ -512,7 +501,7 @@ const VoucherSub = ({
 															handleKeyDown(e, allocateIndex, 7)
 														}
 														onFocus={() => setFocusedRow(allocateIndex)}
-														readOnly
+														// readOnly
 													/>
 												</td>
 											</tr>
