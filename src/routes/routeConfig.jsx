@@ -9,7 +9,8 @@ const routeConfig = [
     { path: '/login', element: <Login /> },
     { path: '/gateway', element: <GatewayPage /> },
     { path: '/purchase_order', element: <PurchaseOrder /> },
-    { path: '/fetch_purchase_order', element: <FetchPurchaseOrder /> }
+    { path: '/fetch_purchase_order', element: <FetchPurchaseOrder /> },
+    { path: '/update_purchase_order/:id', element: <PurchaseOrder /> }
 ];
 
 export default routeConfig;

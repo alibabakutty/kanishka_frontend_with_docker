@@ -5,8 +5,10 @@ import Header from "../utils/Header";
 import SelectArea from "../utils/SelectArea";
 import VoucherSub from "../utils/VoucherSub";
 import Footer from "../utils/Footer"; // Import the new Footer component
+import { useParams } from "react-router-dom";
 
 const PurchaseOrder = () => {
+    const { id } = useParams();
     const [showProduct, setShowProduct] = useState(false);
     const [showSubForm, setShowSubForm] = useState(false);
     const [tableData, setTableData] = useState([
@@ -98,7 +100,7 @@ const PurchaseOrder = () => {
             }
         }
     };
-    
+
     const addRow = () => {
         setTableData((prev) => [
             ...prev,
@@ -131,7 +133,7 @@ const PurchaseOrder = () => {
         }, 0);
         setFilterdStockItem(stockItem)
     };
-    
+
     const handleFormSubmit = async () => {
         const customerName = headerData.customerName;
         const voucherNo = headerData.voucherNo;
@@ -172,7 +174,7 @@ const PurchaseOrder = () => {
         };
         await axios.post('/transact/save', data);
     };
-    
+
     const handleSelect = (e, item, rowIndex) => {
         if (selectedProduct < display.length) {
             if (e.key === "ArrowUp" && selectedProduct > 0) {
@@ -202,7 +204,7 @@ const PurchaseOrder = () => {
             }
         }
     };
-    
+
     const onSelected = (e, item, rowIndex) => {
         const updatedTable = [...tableData];
         updatedTable[rowIndex].productCode = item.label;
@@ -218,13 +220,13 @@ const PurchaseOrder = () => {
         }
         setShowProduct(false);
     };
-    
+
     const afterAllocation = (row) => {
         setTimeout(() => {
             tableRefs.current[row * 2 + 1]?.focus();
         }, 0)
     }
-    
+
     useEffect(() => {
         tableRefs.current = tableRefs.current.filter(ref => ref !== null);
     }, [tableData])
@@ -240,7 +242,7 @@ const PurchaseOrder = () => {
             setTotalQuantity(parseFloat(qty).toFixed(2));
         }
     };
-    
+
     const handleTotalAmount = () => {
         const amt = tableData.reduce(
             (sum, alloc) => sum + parseFloat(alloc.amount),
@@ -248,7 +250,7 @@ const PurchaseOrder = () => {
         );
         if (!isNaN(amt)) setTotalAmount(parseFloat(amt).toFixed(2));
     };
-    
+
     useEffect(() => {
         handleTotalQty();
         handleTotalAmount();
@@ -310,7 +312,7 @@ const PurchaseOrder = () => {
                                     <th className="w-25.75 text-right border border-slate-300">
                                         Amount
                                     </th>
-                                 </tr>
+                                </tr>
                             </thead>
                             <tbody>
                                 {tableData.map((item, rowIndex) => (
@@ -320,7 +322,7 @@ const PurchaseOrder = () => {
                                     >
                                         <td className="text-center border border-slate-300 bg-white">
                                             {rowIndex + 1}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             <input
                                                 ref={(input) =>
@@ -347,34 +349,34 @@ const PurchaseOrder = () => {
                                                     extraParams={rowIndex}
                                                 />
                                             )}
-                                         </td>
+                                        </td>
                                         <td className="border border-slate-300 bg-white">
                                             {item.description}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.hsn}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.gst ? item.gst + ' %' : ''}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.dueOn}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.quantity}
-                                         </td>
+                                        </td>
                                         <td className="text-right border border-slate-300 bg-white">
                                             {item.rate}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.uom}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.discount ? item.discount + ' %' : ''}
-                                         </td>
+                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.tax ? item.tax + ' %' : ''}
-                                         </td>
+                                        </td>
                                         <td className="border border-slate-300 bg-white cursor-default">
                                             <input
                                                 onChange={(e) => handleInputChange(e, rowIndex)}
@@ -388,11 +390,11 @@ const PurchaseOrder = () => {
                                                 onKeyDown={(e) => handleKeyDown(e, rowIndex, 1)}
                                                 readOnly
                                             />
-                                         </td>
-                                     </tr>
+                                        </td>
+                                    </tr>
                                 ))}
                             </tbody>
-                         </table>
+                        </table>
 
                         {showSubForm && (
                             <VoucherSub
@@ -416,7 +418,7 @@ const PurchaseOrder = () => {
                             </span>
                         </div>
                     </div>
-                    
+
                     {/* Footer Component */}
                     <Footer
                         narration={narration}
