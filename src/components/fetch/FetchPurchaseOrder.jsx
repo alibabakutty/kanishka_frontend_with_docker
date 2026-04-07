@@ -1,13 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import { ArrowLeft, UserCircle } from 'lucide-react';
 
 const FetchPurchaseOrder = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        // retrieve the token you stored during login(usually in localstorage)
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('http://localhost:8080/api/v1/purchase-orders', {
+          'Content-Type': 'application/json',
+          // important
+          'Authorization': `Bearer ${token}`
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
+  
   // Mock data based on your image
-  const [orders] = useState([
-    { id: 'SO-25-26-002', date: '2026-03-30', party: 'SRI', ledger: 'VAT Purchase A/c', amount: '787,520,607.07' },
-    { id: 'SO-25-26-003', date: '2026-03-30', party: 'SRI', ledger: 'VAT Purchase A/c', amount: '49,068,375.00' },
-    { id: 'SO-25-26-001', date: '2026-03-30', party: 'ADMIN', ledger: 'VAT Purchase A/c', amount: '17,783,986.43' },
-  ]);
+  // const [orders] = useState([
+  //   { id: 'SO-25-26-002', date: '2026-03-30', party: 'SRI', ledger: 'VAT Purchase A/c', amount: '787,520,607.07' },
+  //   { id: 'SO-25-26-003', date: '2026-03-30', party: 'SRI', ledger: 'VAT Purchase A/c', amount: '49,068,375.00' },
+  //   { id: 'SO-25-26-001', date: '2026-03-30', party: 'ADMIN', ledger: 'VAT Purchase A/c', amount: '17,783,986.43' },
+  // ]);
+
+  if (loading) return <div className='p-4 text-center'>Loading orders...</div>;
+  if (error) return <div className='p-4 text-red-500 text-center'>Error: {error}</div>
 
   return (
     <div className="min-h-screen bg-white font-sans text-xs">
@@ -60,12 +94,12 @@ const FetchPurchaseOrder = () => {
                 key={order.id} 
                 className={`${index % 2 === 0 ? 'bg-[#fffbeb]' : 'bg-white'} border-b border-gray-200 hover:bg-blue-50 transition-colors`}
               >
-                <td className="px-1 py-0.5 text-[#003366]">{order.id}</td>
-                <td className="px-1 py-0.5">{order.date}</td>
-                <td className="px-1 py-0.5">{order.party}</td>
-                <td className="px-1 py-0.5">{order.ledger}</td>
+                <td className="px-1 py-0.5 text-[#003366]">{order.orderNo}</td>
+                <td className="px-1 py-0.5">{order.voucherDate}</td>
+                <td className="px-1 py-0.5">{order.partyLedgerName}</td>
+                <td className="px-1 py-0.5">{order.voucherType}</td>
                 <td className="px-1 py-0.5 text-right font-medium">
-                  <span className="mr-1">₦</span> {order.amount}
+                  <span className="mr-1">₦</span> {order.totalAmount}
                 </td>
               </tr>
             ))}

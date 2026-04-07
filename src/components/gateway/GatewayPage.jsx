@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 const GatewayPage = () => {
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('token');
-  //   if (!token) {
-  //     // if no token exists, kick them back to login immediately
-  //     navigate('/login')
-  //   }
-  // }, [navigate]);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // if no token exists, kick them back to login immediately
+      navigate('/login')
+    }
+  }, [navigate]);
 
   const handleLogout = async () => {
     // 1. Retrieve and Verify the token format before sending
