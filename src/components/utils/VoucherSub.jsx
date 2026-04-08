@@ -162,11 +162,11 @@ const VoucherSub = ({
 		alloctions.push({
 			dueOn: "",
 			location: "",
-			batchNo: "♦ Any",
+			batchNo: "",
 			quantity: "",
-			rate: allocation[0].rate,
-			uom: allocation[0].uom,
-			discount: allocation[0].discount,
+			rate: '',
+			uom: '',
+			discount: '',
 			amount: "",
 		});
 		setOrderData(newAllocation);

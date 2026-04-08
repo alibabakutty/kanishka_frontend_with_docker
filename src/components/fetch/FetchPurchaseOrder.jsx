@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDate, formatINR } from '../utils/utils';
 
@@ -7,6 +7,7 @@ const FetchPurchaseOrder = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [focusedIndex, setFocusedIndex] = useState(0);
   const navigate = useNavigate();
 
   // filter logic
@@ -20,7 +21,33 @@ const FetchPurchaseOrder = () => {
       order.voucherType?.toLowerCase().includes(search) ||
       order.totalAmount?.toString().includes(search)       // converts number to string for searching
     );
-  })
+  });
+
+  useEffect(() => {
+    setFocusedIndex(0);
+  }, [searchTerm]);
+
+  const handleKeyDown = useCallback((e) => {
+    if (filteredOrders.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedIndex((prev) => (prev < filteredOrders.length - 1 ? prev + 1 : prev));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0))
+    } else if (e.key === 'Enter') {
+      const selectedOrder = filteredOrders[focusedIndex];
+      if (selectedOrder) {
+        navigate(`/update_purchase_order/${selectedOrder.id}`)
+      }
+    }
+  }, [filteredOrders, focusedIndex, navigate]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -50,16 +77,6 @@ const FetchPurchaseOrder = () => {
     };
     fetchOrders();
   }, []);
-
-  
-
-  // const formatINR = (val) => {
-  //   if (val === undefined || val === null) return "0.00";
-  //   return val.toLocaleString('en-IN', {
-  //     minimumFractionDigits: 2,
-  //     maximumFractionDigits: 2
-  //   })
-  // };
 
   if (loading) return <div className='p-4 text-center'>Loading orders...</div>;
   if (error) return <div className='p-4 text-red-500 text-center'>Error: {error}</div>
@@ -121,7 +138,10 @@ const FetchPurchaseOrder = () => {
                 <tr
                   key={order.id}
                   onClick={() => navigate(`/update_purchase_order/${order.id}`)}
-                  className={`${index % 2 === 0 ? 'bg-[#fffbeb]' : 'bg-white'} border-b border-gray-200 hover:bg-blue-50 transition-colors`}
+                  className={`cursor-pointer border-b border-gray-200 transition-colors ${focusedIndex === index
+                      ? 'bg-yellow-100' // High contrast for focused row
+                      : index % 2 === 0 ? 'bg-[#fffbeb]' : 'bg-white'
+                    }`}
                 >
                   <td className="px-1 py-0.5 text-[#003366] text-center">{index + 1}</td>
                   <td className="px-1 py-0.5">{order.voucherType}</td>
