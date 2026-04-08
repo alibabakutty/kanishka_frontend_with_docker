@@ -138,8 +138,9 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 						{title}
 					</label>
 					<span className="text-[14px] font-semibold ml-1">
+						:
 					</span>
-					<input type="text" name='voucherNo' value={data.voucherNo} className='w-24 text-[13px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 text-right bg-transparent ml-1 font-semibold' readOnly />
+					<input type="text" name='voucherNo' value={data.voucherNo} className='w-24 text-[13px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 bg-transparent ml-1 font-semibold ' readOnly />
 				</div>
 
 				<div className="flex leading-4 px-1 pt-1.5">
@@ -163,7 +164,7 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 								setSelectIndex(0)
 							}
 						}}
-						className="w-60 border border-transparent focus:bg-[#fee8af] focus:border-blue-500 text-[13px] pl-0.5 bg-transparent outline-0 font-semibold"
+						className="w-90 border border-transparent focus:bg-[#fee8af] focus:border-blue-500 text-[13px] pl-0.5 bg-transparent outline-0 font-semibold"
 						readOnly
 					/>
 				</div>
@@ -223,7 +224,7 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 				<label htmlFor="" className="text-[13px] text-right font-semibold">
 					<input
 						type="text"
-						className="w-20 text-[13px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 bg-transparent text-center"
+						className="w-20 text-[14px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 bg-transparent text-center"
 						onBlur={(e) => dateFormatter(e.target.value)}
 						onChange={(e) =>
 							setDate((prev) => ({ ...prev, startDate: e.target.value }))
@@ -246,10 +247,10 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 						readOnly
 					/>
 				</label>
-				<label className="text-[13px] text-right mr-3">{date.day}</label>
+				<label className="text-[14px] text-right mr-3 font-semibold">{date.day}</label>
 
 				<div className="flex leading-4 mt-5">
-					<label className="text-[13px] w-24">Order No</label>
+					<label className="text-[13px] w-20">Order No</label>
 					<div className="mx-0.5">:</div>
 					<input
 						type="text"
@@ -276,7 +277,7 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 								}
 							}
 						}}
-						className="outline-0 border border-transparent font-semibold pl-0.5 h-4.5 focus:bg-[#fee8af] focus:border focus:border-blue-500 text-[13px] bg-transparent"
+						className="outline-0 border border-transparent font-semibold pl-1 h-4.5 focus:bg-[#fee8af] focus:border focus:border-blue-500 text-[13px] bg-transparent w-32"
 
 					/>
 				</div>

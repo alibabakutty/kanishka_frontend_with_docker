@@ -343,7 +343,7 @@ const PurchaseOrder = () => {
                                             <input
                                                 type="text"
                                                 ref={(input) => (tableRefs.current[rowIndex * 2 + 0] = input)}
-                                                className="w-full outline-0 focus:bg-amber-300"
+                                                className="w-full outline-0 focus:bg-amber-300 pl-1"
                                                 name="description"
                                                 value={item.description}
                                                 onKeyDown={(e) => {
