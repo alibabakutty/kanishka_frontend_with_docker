@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatDate, formatINR } from '../utils/utils';
 
 const FetchPurchaseOrder = () => {
   const [orders, setOrders] = useState([]);
@@ -50,21 +51,15 @@ const FetchPurchaseOrder = () => {
     fetchOrders();
   }, []);
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "";
-    // split the YYYY-MM-DD string
-    const [year, month, day] = dateStr.split("-");
-    // return in DD-MM-YYYY format
-    return `${day}-${month}-${year}`;
-  }
+  
 
-  const formatINR = (val) => {
-    if (val === undefined || val === null) return "0.00";
-    return val.toLocaleString('en-IN', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })
-  };
+  // const formatINR = (val) => {
+  //   if (val === undefined || val === null) return "0.00";
+  //   return val.toLocaleString('en-IN', {
+  //     minimumFractionDigits: 2,
+  //     maximumFractionDigits: 2
+  //   })
+  // };
 
   if (loading) return <div className='p-4 text-center'>Loading orders...</div>;
   if (error) return <div className='p-4 text-red-500 text-center'>Error: {error}</div>

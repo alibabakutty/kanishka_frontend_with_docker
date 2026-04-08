@@ -6,7 +6,7 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 	const [date, setDate] = useState({
 		startDate: '',
 		day: ''
-	})
+	});
 	const [customerName] = useState([]);
 	const [filteredCustomer, setFilteredCustomer] = useState(customerName);
 
@@ -137,10 +137,9 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 					<label className="bg-[#2a67b1] text-center text-[13px] text-white font-semibold  min-w-32 px-5">
 						{title}
 					</label>
-					<span className="text-[14px] font-semibold">
-						{/* &nbsp;No.&nbsp;&nbsp;1 */}
-						<input type="text" />
+					<span className="text-[14px] font-semibold ml-1">
 					</span>
+					<input type="text" name='voucherNo' value={data.voucherNo} className='w-24 text-[13px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 text-right bg-transparent ml-1 font-semibold' readOnly />
 				</div>
 
 				<div className="flex leading-4 px-1 pt-1.5">
@@ -224,7 +223,7 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 				<label htmlFor="" className="text-[13px] text-right font-semibold">
 					<input
 						type="text"
-						className="w-20 text-[13px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 text-right bg-transparent"
+						className="w-20 text-[13px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 bg-transparent text-center"
 						onBlur={(e) => dateFormatter(e.target.value)}
 						onChange={(e) =>
 							setDate((prev) => ({ ...prev, startDate: e.target.value }))
@@ -244,9 +243,10 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 								: (el) => (inputRefs.current[0] = el)
 						}
 						value={date.startDate}
+						readOnly
 					/>
 				</label>
-				<label className="text-[13px] text-right">{date.day}</label>
+				<label className="text-[13px] text-right mr-3">{date.day}</label>
 
 				<div className="flex leading-4 mt-5">
 					<label className="text-[13px] w-24">Order No</label>

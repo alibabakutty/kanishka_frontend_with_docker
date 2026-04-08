@@ -4,7 +4,8 @@ import Title from "../utils/Title";
 import Header from "../utils/Header";
 import VoucherSub from "../utils/VoucherSub";
 import Footer from "../utils/Footer";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { formatDate } from "../utils/utils";
 
 const PurchaseOrder = () => {
     const { id } = useParams();
@@ -40,7 +41,7 @@ const PurchaseOrder = () => {
     const [selectionItem, setSelectionItem] = useState("");
     const [headerData, setHeaderData] = useState({
         customerName: '',
-        voucherNo: '1',
+        voucherNo: '',
         voucherDate: '',
         voucherType: '',
         orderNo: ''
@@ -56,13 +57,14 @@ const PurchaseOrder = () => {
     const display = tableData.length > 1 ? [{ label: "♦ End of List" }, ...filteredStockItem] : filteredStockItem
     const [totalQuantity, setTotalQuantity] = useState("");
     const [totalAmount, setTotalAmount] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get(`http://localhost:8080/api/v1/purchase-orders/${id}`, {
-                    headers: { 'Authorization': `Bearer ${token}`}
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 const data = response.data;
@@ -75,12 +77,12 @@ const PurchaseOrder = () => {
                     orderNo: data.orderNo
                 });
                 // map inventoryentries to your tabledata state
-                if (data.inventoryEntries && data.inventoryEntries.length > 0){
+                if (data.inventoryEntries && data.inventoryEntries.length > 0) {
                     const mapperTableData = data.inventoryEntries.map(entry => ({
                         description: entry.itemName,
                         hsn: '',
                         gst: '',
-                        dueOn: data.voucherDate,
+                        dueOn: formatDate(data.voucherDate),
                         quantity: entry.billedQty,
                         rate: entry.itemRate,
                         uom: entry.itemUom,
@@ -88,7 +90,7 @@ const PurchaseOrder = () => {
                         amount: Math.abs(entry.itemAmount).toFixed(2),
                         allocation: [
                             {
-                                dueOn: data.voucherDate,
+                                dueOn: formatDate(data.voucherDate),
                                 location: "♦ Any",
                                 batchNo: "♦ Any",
                                 quantity: entry.billedQty,
@@ -107,7 +109,7 @@ const PurchaseOrder = () => {
             }
         };
 
-        if (id){
+        if (id) {
             fetchOrderData();
         }
     }, [id]);
@@ -126,13 +128,17 @@ const PurchaseOrder = () => {
     const handleKeyDown = (e, rowIndex, colIndex) => {
         if (e.key === "Enter" && e.target.value.trim() !== "") {
             e.preventDefault();
+
             const nextCell = rowIndex * 2 + colIndex + 1;
+
             if (nextCell < tableRefs.current.length && tableRefs.current[nextCell]) {
                 tableRefs.current[nextCell]?.focus();
                 tableRefs.current[nextCell].setSelectionRange(0, 0)
             } else {
                 if (rowIndex === tableData.length - 1) {
-                    addRow();
+                    if (inputRefs.current[3]) {
+                        inputRefs.current[3].focus();
+                    }
                 } else {
                     tableRefs.current[(rowIndex + 1) * 2]?.focus();
                     tableRefs.current[(rowIndex + 1) * 2].setSelectionRange(0, 0)
@@ -146,38 +152,6 @@ const PurchaseOrder = () => {
                 tableRefs.current[prevCell].setSelectionRange(0, 0);
             }
         }
-    };
-
-    const addRow = () => {
-        setTableData((prev) => [
-            ...prev,
-            {
-                description: "",
-                dueOn: "",
-                quantity: "",
-                rate: "",
-                uom: "",
-                discount: "",
-                amount: "",
-                allocation: [
-                    {
-                        dueOn: "",
-                        location: "",
-                        batchNo: "♦ Any",
-                        quantity: "",
-                        rate: "",
-                        uom: "",
-                        discount: "",
-                        amount: "",
-                    },
-                ],
-            },
-        ]);
-        setTimeout(() => {
-            const rowIndex = tableData.length;
-            tableRefs.current[rowIndex * 2]?.focus();
-        }, 0);
-        setFilterdStockItem(stockItem)
     };
 
     const handleFormSubmit = async () => {
@@ -366,12 +340,12 @@ const PurchaseOrder = () => {
                                             {rowIndex + 1}
                                         </td>
                                         <td className="border border-slate-300 bg-white">
-                                            <input 
-                                                type="text" 
+                                            <input
+                                                type="text"
                                                 ref={(input) => (tableRefs.current[rowIndex * 2 + 0] = input)}
                                                 className="w-full outline-0 focus:bg-amber-300"
                                                 name="description"
-                                                value={item.description}  
+                                                value={item.description}
                                                 onKeyDown={(e) => {
                                                     if (e.key === 'Enter') {
                                                         setShowSubForm(true)
@@ -387,11 +361,11 @@ const PurchaseOrder = () => {
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {/* {item.hsn} */}
-                                            { "Null" }
+                                            {"Null"}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {/* {item.gst ? item.gst + ' %' : ''} */}
-                                            { "Null" }
+                                            {"Null"}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.dueOn}
@@ -407,11 +381,10 @@ const PurchaseOrder = () => {
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {/* {item.discount ? item.discount + ' %' : ''} */}
-                                            { "Null" }
+                                            {"Null"}
                                         </td>
                                         <td className="border border-slate-300 bg-white cursor-default">
                                             <input
-                                                onChange={(e) => handleInputChange(e, rowIndex)}
                                                 className="w-full outline-0 text-right focus:bg-amber-300"
                                                 type="text"
                                                 name="amount"
@@ -420,7 +393,7 @@ const PurchaseOrder = () => {
                                                     (tableRefs.current[rowIndex * 2 + 1] = input)
                                                 }
                                                 onKeyDown={(e) => handleKeyDown(e, rowIndex, 1)}
-                                                // readOnly
+                                                readOnly
                                             />
                                         </td>
                                     </tr>
@@ -463,6 +436,7 @@ const PurchaseOrder = () => {
                         setApprovedBy={setApprovedBy}
                         status={status}
                         setStatus={setStatus}
+                        navigate={navigate}
                     />
                 </form>
             </div>
