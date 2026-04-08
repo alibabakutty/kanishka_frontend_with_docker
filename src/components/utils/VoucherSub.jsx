@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import ModalTitle from "./ModalTitle.jsx";
-import SelectArea from "./SelectArea.jsx";
-
 const VoucherSub = ({
 	isClose,
 	selectionItem,
@@ -180,7 +178,6 @@ const VoucherSub = ({
 
 	const updateAllocation = ()=>{
 		const newRow = [...orderData];
-				newRow[row].description = selectionItem;
 				newRow[row].dueOn = newRow[row].allocation[0].dueOn;
 				newRow[row].quantity = parseFloat(
 					newRow[row].allocation.reduce(

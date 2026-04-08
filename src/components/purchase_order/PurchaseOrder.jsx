@@ -12,7 +12,6 @@ const PurchaseOrder = () => {
     const [showSubForm, setShowSubForm] = useState(false);
     const [tableData, setTableData] = useState([
         {
-            productCode: "",
             description: "",
             hsn: '',
             gst: '',
@@ -50,13 +49,7 @@ const PurchaseOrder = () => {
     const [createdBy, setCreatedBy] = useState("");
     const [approvedBy, setApprovedBy] = useState("");
     const [status, setStatus] = useState("pending");
-    const [stockItem] = useState([
-        { productCode: "10001", label: "Aquafina 1L", quantity: 40 },
-        { productCode: "10002", label: "Kinley 1L", quantity: 40 },
-        { productCode: "10003", label: "Bislery 1L", quantity: 40 },
-        { productCode: "10004", label: "Baily 1L", quantity: 40 },
-        { productCode: "10005", label: "Himalayan 1L", quantity: 40 },
-    ]);
+    const [stockItem] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(0);
     const [focusedRow, setFocusedRow] = useState(null)
     const [filteredStockItem, setFilterdStockItem] = useState(stockItem);
@@ -84,7 +77,6 @@ const PurchaseOrder = () => {
                 // map inventoryentries to your tabledata state
                 if (data.inventoryEntries && data.inventoryEntries.length > 0){
                     const mapperTableData = data.inventoryEntries.map(entry => ({
-                        productCode: entry.itemName,
                         description: entry.itemName,
                         hsn: '',
                         gst: '',
@@ -125,7 +117,7 @@ const PurchaseOrder = () => {
         const updatedData = [...tableData];
         updatedData[rowIndex][name] = value;
         setTableData(updatedData);
-        if (name === 'productCode') {
+        if (name === 'description') {
             const selectedProductItem = stockItem.filter((item) => item.label.toLowerCase().includes(value.toLowerCase()))
             setFilterdStockItem(selectedProductItem)
         }
@@ -160,7 +152,6 @@ const PurchaseOrder = () => {
         setTableData((prev) => [
             ...prev,
             {
-                productCode: "",
                 description: "",
                 dueOn: "",
                 quantity: "",
@@ -196,7 +187,6 @@ const PurchaseOrder = () => {
         const voucherType = headerData.voucherType;
         const orderNo = headerData.orderNo;
         const orderItem = tableData.map((item) => ({
-            productCode: item.productCode,
             description: item.description,
             dueDate: item.dueOn,
             quantity: item.quantity,
@@ -380,7 +370,7 @@ const PurchaseOrder = () => {
                                                 type="text" 
                                                 ref={(input) => (tableRefs.current[rowIndex * 2 + 0] = input)}
                                                 className="w-full outline-0 focus:bg-amber-300"
-                                                name="item.description"
+                                                name="description"
                                                 value={item.description}  
                                                 onKeyDown={(e) => {
                                                     if (e.key === 'Enter') {
@@ -391,7 +381,8 @@ const PurchaseOrder = () => {
                                                     setShowProduct(true);
                                                     setFocusedRow(rowIndex);
                                                 }}
-                                                onBlur={() => setShowProduct(false)}
+                                                // onBlur={() => setShowProduct(false)}
+                                                readOnly
                                             />
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
