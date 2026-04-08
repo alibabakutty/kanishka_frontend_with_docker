@@ -150,7 +150,7 @@ const FetchPurchaseOrder = () => {
                   <td className="px-1 py-0.5 text-center">{formatDate(order.voucherDate)}</td>
                   <td className="px-1 py-0.5">{order.partyLedgerName}</td>
                   <td className="px-1 py-0.5 text-right font-medium">
-                    <span className="mr-1">₹</span> {formatINR(order.totalAmount)}
+                    {formatINR(order.totalAmount)}
                   </td>
                   <td className="px-1 py-0.5 text-center">{"Pending"}</td>
                   <td className="px-1 py-0.5 text-center">{"Pending"}</td>

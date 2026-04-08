@@ -26,7 +26,7 @@ const Footer = ({
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
-                            const confirmed = window.confirm('Do you want Confirm...');
+                            const confirmed = window.confirm('Do you want exit!');
                             if (confirmed) {
                                 // handleFormSubmit();
                                 navigate(-1);

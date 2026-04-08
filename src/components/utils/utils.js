@@ -1,9 +1,9 @@
 export const formatINR = (val) => {
     if (val === undefined || val === null) return "0.00";
-    return val.toLocaleString('en-IN', {
+    return `₹ ${val.toLocaleString('en-IN', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
-    })
+    })}`
 };
 
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ModalTitle from "./ModalTitle.jsx";
+import { formatINR } from "./utils.js";
 const VoucherSub = ({
 	isClose,
 	selectionItem,
@@ -397,7 +398,7 @@ const VoucherSub = ({
 														type="text"
 														autoComplete="off"
 														name="rate"
-														value={allocate.rate}
+														value={formatINR(allocate.rate)}
 														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 4] = el)
@@ -451,7 +452,7 @@ const VoucherSub = ({
 														type="text"
 														autoComplete="off"
 														name="amount"
-														value={(allocate.amount)}
+														value={(formatINR(allocate.amount))}
 														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full "
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 7] = el)

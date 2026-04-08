@@ -5,7 +5,7 @@ import Header from "../utils/Header";
 import VoucherSub from "../utils/VoucherSub";
 import Footer from "../utils/Footer";
 import { useNavigate, useParams } from "react-router-dom";
-import { formatDate } from "../utils/utils";
+import { formatDate, formatINR } from "../utils/utils";
 
 const PurchaseOrder = () => {
     const { id } = useParams();
@@ -374,7 +374,7 @@ const PurchaseOrder = () => {
                                             {item.quantity}
                                         </td>
                                         <td className="text-right border border-slate-300 bg-white">
-                                            {item.rate}
+                                            {formatINR(item.rate)}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.uom}
@@ -388,7 +388,7 @@ const PurchaseOrder = () => {
                                                 className="w-full outline-0 text-right focus:bg-amber-300"
                                                 type="text"
                                                 name="amount"
-                                                value={item.amount}
+                                                value={formatINR(item.amount)}
                                                 ref={(input) =>
                                                     (tableRefs.current[rowIndex * 2 + 1] = input)
                                                 }
@@ -419,6 +419,7 @@ const PurchaseOrder = () => {
                                 {totalQuantity !== '0.00' ? totalQuantity : ''}
                             </span>
                             <span className="w-20 text-right text-[14px] font-semibold">
+                                <span className="mr-1">₹</span>
                                 {totalAmount !== '0.00' ? totalAmount : ''}
                             </span>
                         </div>
