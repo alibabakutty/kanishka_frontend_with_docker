@@ -28,6 +28,12 @@ const FetchPurchaseOrder = () => {
   }, [searchTerm]);
 
   const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Escape'){
+      e.preventDefault();
+      navigate(-1);
+      return;
+    }
+    
     if (filteredOrders.length === 0) return;
 
     if (e.key === 'ArrowDown') {

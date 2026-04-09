@@ -114,16 +114,16 @@ const PurchaseOrder = () => {
         }
     }, [id]);
 
-    const handleInputChange = (e, rowIndex) => {
-        const { value, name } = e.target;
-        const updatedData = [...tableData];
-        updatedData[rowIndex][name] = value;
-        setTableData(updatedData);
-        if (name === 'description') {
-            const selectedProductItem = stockItem.filter((item) => item.label.toLowerCase().includes(value.toLowerCase()))
-            setFilterdStockItem(selectedProductItem)
-        }
-    };
+    // const handleInputChange = (e, rowIndex) => {
+    //     const { value, name } = e.target;
+    //     const updatedData = [...tableData];
+    //     updatedData[rowIndex][name] = value;
+    //     setTableData(updatedData);
+    //     if (name === 'description') {
+    //         const selectedProductItem = stockItem.filter((item) => item.label.toLowerCase().includes(value.toLowerCase()))
+    //         setFilterdStockItem(selectedProductItem)
+    //     }
+    // };
 
     const handleKeyDown = (e, rowIndex, colIndex) => {
         if (e.key === "Enter" && e.target.value.trim() !== "") {
@@ -153,6 +153,21 @@ const PurchaseOrder = () => {
             }
         }
     };
+
+    useEffect(() => {
+        const handleGlobalKeyDown = (e) => {
+            if(e.key === 'Escape'){
+                if (showSubForm) {
+                    setShowSubForm(false)
+                } else {
+                    navigate(-1);
+                }
+            }
+        }
+        window.addEventListener('keydown', handleGlobalKeyDown);
+
+        return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    }, [navigate, showSubForm, showProduct]);
 
     const handleFormSubmit = async () => {
         const customerName = headerData.customerName;
