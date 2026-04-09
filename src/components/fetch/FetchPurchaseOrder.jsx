@@ -134,6 +134,7 @@ const FetchPurchaseOrder = () => {
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO Date</th>
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Party Ledger Name</th>
               <th className="px-1 py-0.5 font-semibold text-center">PO Amount</th>
+              <th className="px-1 py-0.5 font-semibold text-center">Created By</th>
               <th className="px-1 py-0.5 font-semibold text-center">Tally Status</th>
               <th className="px-1 py-0.5 font-semibold text-center">Tab Status</th>
             </tr>
@@ -158,8 +159,9 @@ const FetchPurchaseOrder = () => {
                   <td className="px-1 py-0.5 text-right font-medium">
                     {formatINR(order.totalAmount)}
                   </td>
-                  <td className="px-1 py-0.5 text-center">{order.approvedByTally}</td>
-                  <td className="px-1 py-0.5 text-center">{"Pending"}</td>
+                  <td className="px-1 py-0.5 text-center capitalize">{order.createdBy}</td>
+                  <td className="px-1 py-0.5 text-right">{order.approvedByTally}</td>
+                  <td className="px-1 py-0.5 text-right">{"Pending"}</td>
                 </tr>
               ))
             ) : (

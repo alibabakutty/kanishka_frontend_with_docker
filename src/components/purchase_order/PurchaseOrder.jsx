@@ -81,7 +81,7 @@ const PurchaseOrder = () => {
                     const mapperTableData = data.inventoryEntries.map(entry => ({
                         description: entry.itemName,
                         hsn: '',
-                        gst: '',
+                        gst: entry.gstPercentage ?? '',
                         dueOn: formatDate(data.voucherDate),
                         quantity: entry.billedQty.toFixed(2),
                         rate: entry.itemRate,
@@ -378,16 +378,16 @@ const PurchaseOrder = () => {
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {/* {item.hsn} */}
-                                            {"Null"}
+                                            {""}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
-                                            {/* {item.gst ? item.gst + ' %' : ''} */}
-                                            {"Null"}
+                                            {item.gst ? item.gst + ' %' : ''}
+                                            {/* {"Null"} */}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.dueOn}
                                         </td>
-                                        <td className="text-center border border-slate-300 bg-white">
+                                        <td className="border border-slate-300 bg-white text-right pr-1">
                                             {item.quantity}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
@@ -398,7 +398,7 @@ const PurchaseOrder = () => {
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {/* {item.discount ? item.discount + ' %' : ''} */}
-                                            {"Null"}
+                                            {""}
                                         </td>
                                         <td className="border border-slate-300 bg-white cursor-default">
                                             <input
