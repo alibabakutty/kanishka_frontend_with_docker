@@ -302,11 +302,11 @@ const VoucherSub = ({
 										<th className="border border-slate-400 text-center w-20 font-semibold">
 											Quantity
 										</th>
+										<th className="border border-slate-400 text-center w-10 font-semibold">
+											UOM
+										</th>
 										<th className="border border-slate-400 text-right w-20 font-semibold pr-2">
 											Rate
-										</th>
-										<th className="border border-slate-400 text-center w-8 font-semibold">
-											per
 										</th>
 										<th className="border border-slate-400 text-center w-12 italic font-semibold">
 											Disc %
@@ -397,9 +397,9 @@ const VoucherSub = ({
 													<input
 														type="text"
 														autoComplete="off"
-														name="rate"
-														value={formatINR(allocate.rate)}
-														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full"
+														name="uom"
+														value={allocate.uom}
+														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 4] = el)
 														}
@@ -415,9 +415,9 @@ const VoucherSub = ({
 													<input
 														type="text"
 														autoComplete="off"
-														name="uom"
-														value={allocate.uom}
-														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full"
+														name="rate"
+														value={formatINR(allocate.rate)}
+														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 5] = el)
 														}

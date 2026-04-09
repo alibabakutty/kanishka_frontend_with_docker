@@ -48,7 +48,7 @@ const PurchaseOrder = () => {
     });
     const [narration, setNarration] = useState("");
     const [createdBy, setCreatedBy] = useState("");
-    const [approvedBy, setApprovedBy] = useState("");
+    const [approvedByTally, setApprovedByTally] = useState("");
     const [status, setStatus] = useState("pending");
     const [stockItem] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(0);
@@ -102,6 +102,8 @@ const PurchaseOrder = () => {
                         ]
                     }));
                     setTableData(mapperTableData);
+                    setCreatedBy(data.createdBy);
+                    setApprovedByTally(data.approvedByTally);
                 }
             } catch (error) {
                 console.error('Failed to fetch order:', error);
@@ -156,7 +158,7 @@ const PurchaseOrder = () => {
 
     useEffect(() => {
         const handleGlobalKeyDown = (e) => {
-            if(e.key === 'Escape'){
+            if (e.key === 'Escape') {
                 if (showSubForm) {
                     setShowSubForm(false)
                 } else {
@@ -203,7 +205,7 @@ const PurchaseOrder = () => {
             orderItem,
             narration,
             createdBy,
-            approvedBy,
+            approvedByTally,
             status,
         };
         await axios.post('/transact/save', data);
@@ -328,11 +330,11 @@ const PurchaseOrder = () => {
                                     <th className="w-17.5 text-center border border-slate-300">
                                         Quantity
                                     </th>
+                                    <th className="w-12.5 text-center border border-slate-300">
+                                        UOM
+                                    </th>
                                     <th className="w-22.5 text-right border border-slate-300">
                                         Rate
-                                    </th>
-                                    <th className="w-12.5 text-center border border-slate-300">
-                                        Per
                                     </th>
                                     <th className="w-17.5 text-center border border-slate-300">
                                         Discount %
@@ -388,11 +390,11 @@ const PurchaseOrder = () => {
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.quantity}
                                         </td>
-                                        <td className="text-right border border-slate-300 bg-white">
-                                            {formatINR(item.rate)}
-                                        </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.uom}
+                                        </td>
+                                        <td className="text-right border border-slate-300 bg-white">
+                                            {formatINR(item.rate)}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {/* {item.discount ? item.discount + ' %' : ''} */}
@@ -448,8 +450,8 @@ const PurchaseOrder = () => {
                         handleFormSubmit={handleFormSubmit}
                         createdBy={createdBy}
                         setCreatedBy={setCreatedBy}
-                        approvedBy={approvedBy}
-                        setApprovedBy={setApprovedBy}
+                        approvedByTally={approvedByTally}
+                        setApprovedByTally={setApprovedByTally}
                         status={status}
                         setStatus={setStatus}
                         navigate={navigate}

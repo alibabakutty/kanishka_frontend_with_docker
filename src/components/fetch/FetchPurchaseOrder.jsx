@@ -158,7 +158,7 @@ const FetchPurchaseOrder = () => {
                   <td className="px-1 py-0.5 text-right font-medium">
                     {formatINR(order.totalAmount)}
                   </td>
-                  <td className="px-1 py-0.5 text-center">{"Pending"}</td>
+                  <td className="px-1 py-0.5 text-center">{order.approvedByTally}</td>
                   <td className="px-1 py-0.5 text-center">{"Pending"}</td>
                 </tr>
               ))

@@ -168,16 +168,6 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 						readOnly
 					/>
 				</div>
-
-				<div className="flex leading-4 px-1 my-0.5">
-					<label
-						htmlFor="currentBalance"
-						className="w-32 text-[13px] italic text-slate-500"
-					>
-						Current balance
-					</label>
-					<div className="mr-0.5 text-slate-500">:</div>
-				</div>
 			</div>
 			{isForex && (
 				<div className="pt-1.5 flex justify-center items-center">
@@ -249,7 +239,7 @@ const Header = ({ title, inputRefs, data, setData, tableRefs, isForex }) => {
 				</label>
 				<label className="text-[14px] text-right mr-3 font-semibold">{date.day}</label>
 
-				<div className="flex leading-4 mt-5">
+				<div className="flex leading-4">
 					<label className="text-[13px] w-20">Order No</label>
 					<div className="mx-0.5">:</div>
 					<input
