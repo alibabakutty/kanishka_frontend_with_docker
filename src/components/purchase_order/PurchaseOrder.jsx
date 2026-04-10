@@ -48,8 +48,7 @@ const PurchaseOrder = () => {
     });
     const [narration, setNarration] = useState("");
     const [createdBy, setCreatedBy] = useState("");
-    const [approvedByTally, setApprovedByTally] = useState("");
-    const [status, setStatus] = useState("pending");
+    const [approvedBy, setApprovedBy] = useState("");
     const [stockItem] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(0);
     const [focusedRow, setFocusedRow] = useState(null)
@@ -80,7 +79,7 @@ const PurchaseOrder = () => {
                 if (data.inventoryEntries && data.inventoryEntries.length > 0) {
                     const mapperTableData = data.inventoryEntries.map(entry => ({
                         description: entry.itemName,
-                        hsn: '',
+                        hsn: entry.hsnCode,
                         gst: entry.gstPercentage ?? '',
                         dueOn: formatDate(data.voucherDate),
                         quantity: entry.billedQty.toFixed(2),
@@ -102,8 +101,10 @@ const PurchaseOrder = () => {
                         ]
                     }));
                     setTableData(mapperTableData);
+                    setNarration(data.narration);
                     setCreatedBy(data.createdBy);
-                    setApprovedByTally(data.approvedByTally);
+                    setApprovedBy(data.approvedBy);
+                    console.log('Approved Tally Status:', data.approvedBy);
                 }
             } catch (error) {
                 console.error('Failed to fetch order:', error);
@@ -205,8 +206,7 @@ const PurchaseOrder = () => {
             orderItem,
             narration,
             createdBy,
-            approvedByTally,
-            status,
+            approvedBy
         };
         await axios.post('/transact/save', data);
     };
@@ -291,6 +291,10 @@ const PurchaseOrder = () => {
         handleTotalQty();
         handleTotalAmount();
     }, [tableData])
+
+    useEffect(() => {
+        console.log("PARENT STATE:", approvedBy);
+    }, [approvedBy]);
 
     return (
         <>
@@ -377,8 +381,8 @@ const PurchaseOrder = () => {
                                             />
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
-                                            {/* {item.hsn} */}
-                                            {""}
+                                            {item.hsn || ''}
+                                            {/* {""} */}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.gst ? item.gst + ' %' : ''}
@@ -450,10 +454,8 @@ const PurchaseOrder = () => {
                         handleFormSubmit={handleFormSubmit}
                         createdBy={createdBy}
                         setCreatedBy={setCreatedBy}
-                        approvedByTally={approvedByTally}
-                        setApprovedByTally={setApprovedByTally}
-                        status={status}
-                        setStatus={setStatus}
+                        approvedBy={approvedBy}
+                        setApprovedBy={setApprovedBy}
                         navigate={navigate}
                     />
                 </form>
