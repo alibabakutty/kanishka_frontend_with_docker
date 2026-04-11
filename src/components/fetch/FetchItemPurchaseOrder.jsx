@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDate, formatINR } from '../utils/utils';
 
@@ -8,45 +8,77 @@ const FetchItemPurchaseOrder = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [focusedIndex, setFocusedIndex] = useState(0);
-    const navigate = useNavigate();
-
-    const flattenedOrders = orders.flatMap((order) =>
-        order.inventoryEntries.map((item) => ({
-            ...order,
-            itemName: item.itemName,
-            hsnCode: item.hsnCode,
-            gstPercentage: item.gstPercentage,
-            itemUom: item.itemUom,
-            billedQty: item.billedQty,
-            itemRate: item.itemRate,
-            itemAmount: item.itemAmount
-        }))
-    );
-
-    // filter logic
-    const filteredOrders = flattenedOrders.filter((order) => {
-        const search = searchTerm.toLowerCase();
-
-        return (
-            order.orderNo?.toLowerCase().includes(search) ||
-            order.voucherDate?.toLowerCase().includes(search) ||
-            order.partyLedgerName?.toLowerCase().includes(search) ||
-            order.voucherType?.toLowerCase().includes(search) ||
-            order.totalAmount?.toString().includes(search) ||
-            order.itemName?.toLowerCase().includes(search) ||
-            order.hsnCode?.toLowerCase().includes(search) ||
-            order.itemUom?.toLowerCase().includes(search)
-            // order.gstPercentage?.toLowerCase().includes(search)
-        );
+    const [filters, setFilters] = useState({
+        voucherType: '',
+        voucherNumber: '',
+        orderNo: '',
+        date: '',
+        party: '',
+        amount: '',
+        itemName: '',
+        hsn: '',
+        gst: '',
+        qty: '',
+        rate: '',
+        uom: '',
+        itemAmount: '',
+        createdBy: '',
+        approvedBy: ''
     });
+    const navigate = useNavigate();
+    // flatter inventory entries
+    const flattenedOrders = useMemo(() => {
+        return orders.flatMap((order) =>
+            order.inventoryEntries.map((item) => ({
+                ...order,
+                itemName: item.itemName,
+                hsnCode: item.hsnCode,
+                gstPercentage: item.gstPercentage,
+                itemUom: item.itemUom,
+                billedQty: item.billedQty,
+                itemRate: item.itemRate,
+                itemAmount: item.itemAmount
+            }))
+        );
+    }, [orders]);
+
+    // combined filter logic
+    const filteredOrders = useMemo(() => {
+        return flattenedOrders.filter((order) => {
+            const search = searchTerm.toLowerCase();
+            // global search
+            const globalMatch = !search || Object.values(order).some(val =>
+                val?.toString().toLowerCase().includes(search)
+            );
+            // 🔹 Column Filters
+            const columnMatch =
+                (!filters.voucherType || order.voucherType?.toLowerCase().includes(filters.voucherType.toLowerCase())) &&
+                (!filters.voucherNumber || order.voucherNumber?.toLowerCase().includes(filters.voucherNumber.toLowerCase())) &&
+                (!filters.orderNo || order.orderNo?.toLowerCase().includes(filters.orderNo.toLowerCase())) &&
+                (!filters.date || order.voucherDate?.toLowerCase().includes(filters.date.toLowerCase())) &&
+                (!filters.party || order.partyLedgerName?.toLowerCase().includes(filters.party.toLowerCase())) &&
+                (!filters.amount || order.totalAmount?.toString().includes(filters.amount)) &&
+                (!filters.itemName || order.itemName?.toLowerCase().includes(filters.itemName.toLowerCase())) &&
+                (!filters.hsn || order.hsnCode?.toLowerCase().includes(filters.hsn.toLowerCase())) &&
+                (!filters.gst || order.gstPercentage?.toString().includes(filters.gst)) &&
+                (!filters.qty || order.billedQty?.toString().includes(filters.qty)) &&
+                (!filters.rate || order.itemRate?.toString().includes(filters.rate)) &&
+                (!filters.uom || order.itemUom?.toLowerCase().includes(filters.uom.toLowerCase())) &&
+                (!filters.itemAmount || Math.abs(order.itemAmount)?.toString().includes(filters.itemAmount)) &&
+                (!filters.createdBy || order.createdBy?.toLowerCase().includes(filters.createdBy.toLowerCase())) &&
+                (!filters.approvedBy || order.approvedBy?.toLowerCase().includes(filters.approvedBy.toLowerCase()));
+
+            return globalMatch && columnMatch;
+        });
+    }, [flattenedOrders, searchTerm, filters])
 
     useEffect(() => {
         setFocusedIndex(0);
-    }, [searchTerm]);
+    }, [searchTerm, filters]);
 
+    // ✅ Keyboard Navigation
     const handleKeyDown = useCallback((e) => {
         if (e.key === 'Escape') {
-            e.preventDefault();
             navigate(-1);
             return;
         }
@@ -55,14 +87,18 @@ const FetchItemPurchaseOrder = () => {
 
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            setFocusedIndex((prev) => (prev < filteredOrders.length - 1 ? prev + 1 : prev));
+            setFocusedIndex((prev) =>
+                prev < filteredOrders.length - 1 ? prev + 1 : prev
+            );
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0))
+            setFocusedIndex((prev) =>
+                prev > 0 ? prev - 1 : 0
+            );
         } else if (e.key === 'Enter') {
-            const selectedOrder = filteredOrders[focusedIndex];
-            if (selectedOrder) {
-                navigate(`/update_purchase_order/${selectedOrder.id}`)
+            const selected = filteredOrders[focusedIndex];
+            if (selected) {
+                navigate(`/update_purchase_order/${selected.id}`);
             }
         }
     }, [filteredOrders, focusedIndex, navigate]);
@@ -161,6 +197,26 @@ const FetchItemPurchaseOrder = () => {
                             <th className="px-1 py-0.5 font-semibold text-right">Created By</th>
                             <th className="px-1 py-0.5 font-semibold text-right">Approved Status</th>
                             {/* <th className="px-1 py-0.5 font-semibold text-right">Tab Status</th> */}
+                        </tr>
+
+                        {/* 🔥 Filter Row */}
+                        <tr className="bg-gray-200">
+                            <th></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, voucherType: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, voucherNumber: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, orderNo: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, date: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, party: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, amount: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, itemName: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, hsn: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, gst: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, qty: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, rate: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, uom: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, itemAmount: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, createdBy: e.target.value })} className="w-full" /></th>
+                            <th><input onChange={(e) => setFilters({ ...filters, approvedBy: e.target.value })} className="w-full" /></th>
                         </tr>
                     </thead>
                     <tbody>
