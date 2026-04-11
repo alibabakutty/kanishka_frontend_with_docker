@@ -6,11 +6,11 @@ const GatewayPage = () => {
   
   // 1. Flatten the menu items for easier indexing
   const menuItems = [
-    { section: 'MASTERS', label: 'Customer Master', hotkey: 'C', path: '/customers' },
-    { section: 'MASTERS', label: 'Inventory Master', hotkey: 'I', path: '/inventory' },
+    { section: 'MASTERS', label: 'Customer Master', hotkey: 'C' },
+    { section: 'MASTERS', label: 'Inventory Master', hotkey: 'I' },
     { section: 'VOUCHERS', label: 'Purchase Order Register', hotkey: 'P', path: '/fetch_purchase_order' },
     { section: 'VOUCHERS', label: 'PPO Item Register', path: '/fetch_item_purchase_order'},
-    { section: 'SYSTEM', label: 'Quit', hotkey: 'Q', isQuit: true },
+    { section: '', label: 'Quit', hotkey: 'Q', isQuit: true },
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -59,7 +59,7 @@ const GatewayPage = () => {
       </div>
 
       <header className="z-10 bg-[#1e4e8a] text-white px-6 py-1 flex items-center justify-between shadow-md">
-        <h1 className="text-lg font-bold tracking-wide uppercase">Kanishka Purchase Order</h1>
+        <h1 className="text-lg font-bold tracking-wide uppercase">Demo Web Purchase Order</h1>
         <div className="flex items-center gap-4 text-sm">
           <span>Welcome, <strong>admin</strong></span>
           <button onClick={handleLogout} className="hover:underline">Logout</button>
@@ -69,15 +69,15 @@ const GatewayPage = () => {
       <main className="flex-1 z-10 flex items-center justify-center p-4">
         <div className="w-full max-w-xs bg-[#e1f0ff] border-2 border-[#1e4e8a] shadow-2xl rounded-sm overflow-hidden">
           <div className="bg-[#1e4e8a] text-white py-1 text-center font-bold text-sm uppercase tracking-wider">
-            Kanishka Gateway
+            Gateway of Tally
           </div>
 
-          <div className="py-2 text-center">
+          <div className="py-2">
             {menuItems.map((item, idx) => (
               <React.Fragment key={idx}>
                 {/* Section Header (Show only if first item in section) */}
                 {(idx === 0 || menuItems[idx - 1].section !== item.section) && (
-                  <h3 className="text-gray-400 text-[10px] font-bold tracking-[0.2em] mt-2 mb-1 uppercase">
+                  <h3 className="text-gray-400 text-[10px] font-bold tracking-[0.2em] mt-2 mb-1 uppercase text-center">
                     {item.section}
                   </h3>
                 )}
@@ -85,7 +85,7 @@ const GatewayPage = () => {
                 <div
                   onClick={() => item.isQuit ? handleLogout() : navigate(item.path)}
                   className={`
-                    text-[#003366] text-[13px] font-semibold cursor-pointer py-1 transition-colors
+                    text-[#003366] pl-7 text-[13px] font-semibold cursor-pointer py-1 transition-colors
                     ${selectedIndex === idx ? 'bg-yellow-100' : 'hover:bg-yellow-100'}
                   `}
                 >

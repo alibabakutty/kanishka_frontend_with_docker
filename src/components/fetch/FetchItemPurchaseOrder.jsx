@@ -25,8 +25,10 @@ const FetchItemPurchaseOrder = () => {
         createdBy: '',
         approvedBy: ''
     });
+
     const navigate = useNavigate();
-    // flatter inventory entries
+
+    // Flatten inventory entries
     const flattenedOrders = useMemo(() => {
         return orders.flatMap((order) =>
             order.inventoryEntries.map((item) => ({
@@ -42,15 +44,17 @@ const FetchItemPurchaseOrder = () => {
         );
     }, [orders]);
 
-    // combined filter logic
+    // Filtering
     const filteredOrders = useMemo(() => {
         return flattenedOrders.filter((order) => {
             const search = searchTerm.toLowerCase();
-            // global search
-            const globalMatch = !search || Object.values(order).some(val =>
-                val?.toString().toLowerCase().includes(search)
-            );
-            // 🔹 Column Filters
+
+            const globalMatch =
+                !search ||
+                Object.values(order).some((val) =>
+                    val?.toString().toLowerCase().includes(search)
+                );
+
             const columnMatch =
                 (!filters.voucherType || order.voucherType?.toLowerCase().includes(filters.voucherType.toLowerCase())) &&
                 (!filters.voucherNumber || order.voucherNumber?.toLowerCase().includes(filters.voucherNumber.toLowerCase())) &&
@@ -70,95 +74,94 @@ const FetchItemPurchaseOrder = () => {
 
             return globalMatch && columnMatch;
         });
-    }, [flattenedOrders, searchTerm, filters])
+    }, [flattenedOrders, searchTerm, filters]);
 
     useEffect(() => {
         setFocusedIndex(0);
     }, [searchTerm, filters]);
 
-    // ✅ Keyboard Navigation
-    const handleKeyDown = useCallback((e) => {
-        if (e.key === 'Escape') {
-            navigate(-1);
-            return;
-        }
-
-        if (filteredOrders.length === 0) return;
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            setFocusedIndex((prev) =>
-                prev < filteredOrders.length - 1 ? prev + 1 : prev
-            );
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            setFocusedIndex((prev) =>
-                prev > 0 ? prev - 1 : 0
-            );
-        } else if (e.key === 'Enter') {
-            const selected = filteredOrders[focusedIndex];
-            if (selected) {
-                navigate(`/update_purchase_order/${selected.id}`);
+    // Keyboard Navigation
+    const handleKeyDown = useCallback(
+        (e) => {
+            if (e.key === 'Escape') {
+                navigate(-1);
+                return;
             }
-        }
-    }, [filteredOrders, focusedIndex, navigate]);
+
+            if (filteredOrders.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setFocusedIndex((prev) =>
+                    prev < filteredOrders.length - 1 ? prev + 1 : prev
+                );
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+            } else if (e.key === 'Enter') {
+                const selected = filteredOrders[focusedIndex];
+                if (selected) {
+                    navigate(`/update_purchase_order/${selected.id}`);
+                }
+            }
+        },
+        [filteredOrders, focusedIndex, navigate]
+    );
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
+    // Fetch Data
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                // retrieve the token you stored during login(usually in localstorage)
                 const token = localStorage.getItem('token');
 
-                const response = await fetch('http://localhost:8080/api/v1/purchase-orders', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                const response = await fetch(
+                    'http://localhost:8080/api/v1/purchase-orders',
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        }
                     }
-                });
+                );
 
                 if (!response.ok) {
-                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                    throw new Error(`Error: ${response.status}`);
                 }
 
                 const data = await response.json();
                 setOrders(data);
             } catch (err) {
-                setError(err.message)
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
+
         fetchOrders();
     }, []);
 
-    if (loading) return <div className='p-4 text-center'>Loading orders...</div>;
-    if (error) return <div className='p-4 text-red-500 text-center'>Error: {error}</div>
+    if (loading) return <div className="p-4 text-center">Loading orders...</div>;
+    if (error) return <div className="p-4 text-red-500 text-center">Error: {error}</div>;
 
     return (
-        <div className="min-h-screen bg-white font-sans text-xs">
-            {/* Top Blue Navbar */}
-            <nav className="bg-[#003366] text-white px-4 py-2 flex justify-between items-center">
-                <h1 className="text-lg font-bold tracking-tight">KANISHKA PURCAHSE ORDER</h1>
-
-                <div className="flex items-center gap-6">
-                    <button className="bg-[#e63946] px-4 py-1 rounded flex items-center gap-2 font-semibold uppercase text-xs">
-                        <span className="bg-white text-[#e63946] rounded-sm px-0.5">■</span> ADMINISTRATOR
-                    </button>
-                    <div className="text-xs">
-                        Welcome, <span className="font-bold">admin</span> | <button className="hover:underline">Logout</button>
-                    </div>
-                </div>
+        <div className="min-h-screen bg-white text-xs">
+            {/* Navbar */}
+            <nav className="bg-[#003366] text-white px-4 py-1 flex justify-between">
+                <h1 className="text-lg font-bold">PURCHASE ORDER</h1>
+                <div>admin | Logout</div>
             </nav>
 
-            {/* Sub-header / Search Area */}
-            <div className="bg-[#f0f0f0] border-b border-gray-300 p-1 flex justify-between items-center">
-                <button onClick={() => navigate(-1)} className="bg-[#004d26] text-white px-3 py-0.5 rounded text-xs flex items-center gap-1">
+            {/* Search */}
+            <div className="bg-gray-100 p-1 flex justify-between">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="bg-green-700 text-white px-3 py-1"
+                >
                     ← Back
                 </button>
 
@@ -167,98 +170,83 @@ const FetchItemPurchaseOrder = () => {
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-1/3 border border-gray-400 bg-[#ffffcc] px-2 py-0.5 outline-none focus:border-blue-500"
+                    className="border px-2"
                 />
-
-                <span className="text-[#003366] font-bold text-xs pr-2 italic">
-                    Purcahse Order Display
-                </span>
             </div>
 
-            {/* Table Section */}
-            <div className="w-full">
-                <table className="w-full border-collapse">
-                    <thead>
-                        <tr className="bg-[#004d26] text-white text-left">
-                            <th className="px-px py-0.5 font-semibold border-r border-gray-500 text-center">S. No</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Voucher Type</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">Voucher No</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">PO No</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO Date</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Party Ledger Name</th>
-                            <th className="px-1 py-0.5 font-semibold text-right">PO Amount</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">Stock Item Name</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">HSN</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">GST</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">Qty</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">Rate</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">UOM</th>
-                            <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">Amount</th>
-                            <th className="px-1 py-0.5 font-semibold text-right">Created By</th>
-                            <th className="px-1 py-0.5 font-semibold text-right">Approved Status</th>
-                            {/* <th className="px-1 py-0.5 font-semibold text-right">Tab Status</th> */}
+            {/* ✅ Horizontal Scroll Wrapper */}
+            <div className="w-full overflow-x-auto">
+                <table className=" border-collapse min-w-[1500px]">
+                    {/* Sticky Header */}
+                    <thead className="sticky top-0 z-10">
+                        <tr className="bg-green-800 text-white">
+                            <th>S.No</th>
+                            <th className='w-52'>Voucher Type</th>
+                            <th className='w-28'>Voucher No</th>
+                            <th className='w-28'>PO No</th>
+                            <th className='w-28'>PO Date</th>
+                            <th className='w-60'>Party Ledger Name</th>
+                            <th className='w-28'>PO Amount</th>
+                            <th className='w-60'>Item Name</th>
+                            <th className='w-20'>HSN</th>
+                            <th className='w-12'>GST %</th>
+                            <th className='w-12'>Qty</th>
+                            <th className='w-28'>Rate</th>
+                            <th className='w-12'>UOM</th>
+                            <th className='w-24'>Item Amount</th>
+                            <th className='w-20'>Created By</th>
+                            <th className='w-28'>Approved Status</th>
                         </tr>
 
-                        {/* 🔥 Filter Row */}
+                        {/* Filters */}
                         <tr className="bg-gray-200">
                             <th></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, voucherType: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, voucherNumber: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, orderNo: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, date: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, party: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, amount: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, itemName: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, hsn: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, gst: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, qty: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, rate: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, uom: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, itemAmount: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, createdBy: e.target.value })} className="w-full" /></th>
-                            <th><input onChange={(e) => setFilters({ ...filters, approvedBy: e.target.value })} className="w-full" /></th>
+                            {Object.keys(filters).map((key) => (
+                                <th key={key}>
+                                    <input
+                                        className="w-full"
+                                        onChange={(e) =>
+                                            setFilters({ ...filters, [key]: e.target.value })
+                                        }
+                                    />
+                                </th>
+                            ))}
                         </tr>
                     </thead>
-                    <tbody>
-                        {filteredOrders.length > 0 ? (
-                            filteredOrders.map((order, index) => (
-                                <tr
-                                    key={`${order.id} - ${index}`}
-                                    onClick={() => navigate(`/update_purchase_order/${order.id}`)}
-                                    className={`cursor-pointer border-b border-gray-200 transition-colors ${focusedIndex === index
-                                        ? 'bg-yellow-100' // High contrast for focused row
-                                        : index % 2 === 0 ? 'bg-[#fffbeb]' : 'bg-white'
-                                        }`}
-                                >
-                                    <td className="px-1 py-0.5 text-[#003366] text-center">{index + 1}</td>
-                                    <td className="px-1 py-0.5">{order.voucherType}</td>
-                                    <td className="px-1 py-0.5 text-[#003366] text-right">{order.voucherNumber}</td>
-                                    <td className="px-1 py-0.5 text-[#003366] text-right">{order.orderNo}</td>
-                                    <td className="px-1 py-0.5 text-center">{formatDate(order.voucherDate)}</td>
-                                    <td className="px-1 py-0.5">{order.partyLedgerName}</td>
-                                    <td className="px-1 py-0.5 text-right font-medium">
-                                        {formatINR(order.totalAmount)}
-                                    </td>
-                                    {/* Item Data */}
-                                    <td className="text-left">{order.itemName}</td>
-                                    <td className="text-right">{order.hsnCode}</td>
-                                    <td className="text-right">{order.gstPercentage}%</td>
-                                    <td className="text-right">{order.billedQty}</td>
-                                    <td className="text-right">{formatINR(order.itemRate)}</td>
-                                    <td className="text-right">{order.itemUom}</td>
-                                    <td className="text-right">{formatINR(Math.abs(order.itemAmount))}</td>
 
-                                    <td className="px-1 py-0.5 text-right capitalize">{order.createdBy}</td>
-                                    <td className="px-1 py-0.5 text-right">{order.approvedBy}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="5" className='text-center py-4 text-gray-500'>
-                                    No matching records found
-                                </td>
+                    <tbody>
+                        {filteredOrders.map((order, index) => (
+                            <tr
+                                key={index}
+                                onClick={() =>
+                                    navigate(`/update_purchase_order/${order.id}`)
+                                }
+                                className={`cursor-pointer ${
+                                    focusedIndex === index
+                                        ? 'bg-yellow-100'
+                                        : index % 2 === 0
+                                        ? 'bg-yellow-50'
+                                        : ''
+                                }`}
+                            >
+                                <td className='pl-1'>{index + 1}</td>
+                                <td>{order.voucherType}</td>
+                                <td>{order.voucherNumber}</td>
+                                <td>{order.orderNo}</td>
+                                <td>{formatDate(order.voucherDate)}</td>
+                                <td className=''>{order.partyLedgerName}</td>
+                                <td className='text-right'>{formatINR(order.totalAmount)}</td>
+                                <td className='pl-2'>{order.itemName}</td>
+                                <td>{order.hsnCode}</td>
+                                <td>{order.gstPercentage}%</td>
+                                <td className='text-right'>{order.billedQty.toFixed(2)}</td>
+                                <td className='text-right'>{formatINR(order.itemRate)}</td>
+                                <td className='pl-3 capitalize'>{order.itemUom}</td>
+                                <td className='text-right'>{formatINR(Math.abs(order.itemAmount))}</td>
+                                <td className='pl-3'>{order.createdBy}</td>
+                                <td>{order.approvedBy}</td>
                             </tr>
-                        )}
+                        ))}
                     </tbody>
                 </table>
             </div>

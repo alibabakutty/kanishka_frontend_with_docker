@@ -91,14 +91,14 @@ const FetchPurchaseOrder = () => {
     <div className="min-h-screen bg-white font-sans text-xs">
       {/* Top Blue Navbar */}
       <nav className="bg-[#003366] text-white px-4 py-2 flex justify-between items-center">
-        <h1 className="text-lg font-bold tracking-tight">KANISHKA PURCAHSE ORDER</h1>
+        <h1 className="text-lg font-bold tracking-tight">PURCHASE ORDER</h1>
 
         <div className="flex items-center gap-6">
-          <button className="bg-[#e63946] px-4 py-1 rounded flex items-center gap-2 font-semibold uppercase text-xs">
+          {/* <button className="bg-[#e63946] px-4 py-1 rounded flex items-center gap-2 font-semibold uppercase text-xs">
             <span className="bg-white text-[#e63946] rounded-sm px-0.5">■</span> ADMINISTRATOR
-          </button>
+          </button> */}
           <div className="text-xs">
-            Welcome, <span className="font-bold">admin</span> | <button className="hover:underline">Logout</button>
+            <span className="font-bold">admin</span> | <button className="hover:underline">Logout</button>
           </div>
         </div>
       </nav>
@@ -118,7 +118,7 @@ const FetchPurchaseOrder = () => {
         />
 
         <span className="text-[#003366] font-bold text-xs pr-2 italic">
-          Purcahse Order Display
+          Purchase Order Display
         </span>
       </div>
 
@@ -129,8 +129,8 @@ const FetchPurchaseOrder = () => {
             <tr className="bg-[#004d26] text-white text-left">
               <th className="px-px py-0.5 font-semibold border-r border-gray-500 text-center">S. No</th>
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Voucher Type</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">Voucher No</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">PO No</th>
+              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Voucher No</th>
+              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO No</th>
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO Date</th>
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Party Ledger Name</th>
               <th className="px-1 py-0.5 font-semibold text-right">PO Amount</th>
@@ -152,8 +152,8 @@ const FetchPurchaseOrder = () => {
                 >
                   <td className="px-1 py-0.5 text-[#003366] text-center">{index + 1}</td>
                   <td className="px-1 py-0.5">{order.voucherType}</td>
-                  <td className="px-1 py-0.5 text-[#003366] text-right">{order.voucherNumber}</td>
-                  <td className="px-1 py-0.5 text-[#003366] text-right">{order.orderNo}</td>
+                  <td className="px-1 py-0.5 pl-3">{order.voucherNumber}</td>
+                  <td className="px-1 py-0.5 pl-3">{order.orderNo}</td>
                   <td className="px-1 py-0.5 text-center">{formatDate(order.voucherDate)}</td>
                   <td className="px-1 py-0.5">{order.partyLedgerName}</td>
                   <td className="px-1 py-0.5 text-right font-medium">
