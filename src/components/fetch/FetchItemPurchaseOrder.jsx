@@ -27,7 +27,7 @@ const FetchItemPurchaseOrder = () => {
     });
 
     const navigate = useNavigate();
-
+    const [showFilters, setShowFilters] = useState(false);
     // Flatten inventory entries
     const flattenedOrders = useMemo(() => {
         return orders.flatMap((order) =>
@@ -188,6 +188,37 @@ const FetchItemPurchaseOrder = () => {
                     ← Back
                 </button>
 
+                <button
+                    onClick={() => {
+                        setShowFilters(prev => {
+                            if (prev) {
+                                // clearing filters when hiding
+                                setFilters({
+                                    voucherType: '',
+                                    voucherNumber: '',
+                                    orderNo: '',
+                                    date: '',
+                                    party: '',
+                                    amount: '',
+                                    itemName: '',
+                                    hsn: '',
+                                    gst: '',
+                                    qty: '',
+                                    rate: '',
+                                    uom: '',
+                                    itemAmount: '',
+                                    createdBy: '',
+                                    approvedBy: ''
+                                });
+                            }
+                            return !prev;
+                        });
+                    }}
+                    className="bg-cyan-700 text-white px-3 py-1"
+                >
+                    {showFilters ? 'Hide Filter' : 'Advance Filter'}
+                </button>
+
                 <input
                     type="text"
                     placeholder="Search..."
@@ -199,7 +230,7 @@ const FetchItemPurchaseOrder = () => {
 
             {/* ✅ Horizontal Scroll Wrapper */}
             <div className="flex-1 overflow-auto">
-                <table className=" border-collapse min-w-[1500px]">
+                <table className=" border-collapse min-w-375">
                     {/* Sticky Header */}
                     <thead className="sticky top-0 z-10">
                         <tr className="bg-green-800 text-white">
@@ -222,19 +253,23 @@ const FetchItemPurchaseOrder = () => {
                         </tr>
 
                         {/* Filters */}
-                        <tr className="bg-gray-200">
-                            <th></th>
-                            {Object.keys(filters).map((key) => (
-                                <th key={key}>
-                                    <input
-                                        className="w-full"
-                                        onChange={(e) =>
-                                            setFilters({ ...filters, [key]: e.target.value })
-                                        }
-                                    />
-                                </th>
-                            ))}
-                        </tr>
+                        {showFilters && (
+                            <tr className="bg-gray-200">
+                                <th></th>
+                                {Object.keys(filters).map((key) => (
+                                    <th key={key}>
+                                        <input
+                                            className="text-[12px] outline-0 border border-transparent focus:border focus:border-blue-400 focus:bg-amber-200 bg-transparent w-full pl-1 capitalize"
+                                            value={filters[key]}
+                                            onChange={(e) =>
+                                                setFilters({ ...filters, [key]: e.target.value })
+                                            }
+                                            placeholder="type..."
+                                        />
+                                    </th>
+                                ))}
+                            </tr>
+                        )}
                     </thead>
 
                     <tbody>
@@ -283,7 +318,7 @@ const FetchItemPurchaseOrder = () => {
                     </div>
 
                     {/* Qty Total */}
-                    <div className="text-right font-semibold ml-[1025px]">
+                    <div className="text-right font-semibold ml-[1050px]">
                         {isFilterApplied ? totals.qty.toFixed(2) : ''}
                     </div>
 
