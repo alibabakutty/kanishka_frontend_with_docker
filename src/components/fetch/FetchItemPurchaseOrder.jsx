@@ -95,42 +95,52 @@ const FetchItemPurchaseOrder = () => {
             if (filteredOrders.length === 0) return;
 
             switch (e.key) {
-                case 'ArrowDown':
+                case 'ArrowDown': {
                     e.preventDefault();
                     setFocusedIndex((prev) =>
                         prev < filteredOrders.length - 1 ? prev + 1 : prev
                     );
                     break;
+                }
+                    
 
-                case 'ArrowUp':
+                case 'ArrowUp': {
                     e.preventDefault();
                     setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0));
                     break;
+                }
+                    
 
-                case 'ArrowRight':
+                case 'ArrowRight': {
                     e.preventDefault();
                     setFocusedCol((prev) =>
                         prev < totalColumns - 1 ? prev + 1 : prev
                     );
                     break;
+                }
+                    
 
-                case 'ArrowLeft':
+                case 'ArrowLeft': {
                     e.preventDefault();
                     setFocusedCol((prev) => (prev > 0 ? prev - 1 : 0));
                     break;
+                }
+                    
 
-                case 'Enter':
+                case 'Enter': {
                     const selected = filteredOrders[focusedIndex];
                     if (selected) {
                         navigate(`/update_purchase_order/${selected.id}`);
                     }
                     break;
+                }
+                    
 
                 default:
                     break;
             }
         },
-        [filteredOrders, focusedIndex, focusedCol, navigate]
+        [filteredOrders, focusedIndex, navigate]
     );
 
     useEffect(() => {
@@ -169,11 +179,6 @@ const FetchItemPurchaseOrder = () => {
 
         fetchOrders();
     }, []);
-
-    const grossTotal = filteredOrders.reduce(
-        (sum, order) => sum + (Number(order.itemAmount) || 0),
-        0
-    );
 
     const totals = useMemo(() => {
         return filteredOrders.reduce(
@@ -267,7 +272,7 @@ const FetchItemPurchaseOrder = () => {
 
             {/* ✅ Horizontal Scroll Wrapper */}
             <div className="flex-1 overflow-auto">
-                <table className=" border-collapse min-w-[1600px] border border-gray-400">
+                <table className=" border-collapse min-w-400 border border-gray-400">
                     {/* Sticky Header */}
                     <thead className="sticky top-0 z-10">
                         <tr className="bg-green-800 text-white">
@@ -382,7 +387,7 @@ const FetchItemPurchaseOrder = () => {
                     </div>
 
                     {/* Qty Total */}
-                    <div className="text-right font-semibold ml-[1020px]">
+                    <div className="text-right font-semibold ml-255">
                         {isFilterApplied ? totals.qty.toFixed(2) : ''}
                     </div>
 
@@ -390,7 +395,7 @@ const FetchItemPurchaseOrder = () => {
                     <div className=""></div>
 
                     {/* Amount Total */}
-                    <div className="text-right font-bold ml-[145px]">
+                    <div className="text-right font-bold ml-36.25">
                         {isFilterApplied ? formatINR(Math.abs(totals.amount)) : ''}
                     </div>
 

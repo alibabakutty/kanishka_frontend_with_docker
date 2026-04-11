@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import Title from "../utils/Title";
 import Header from "../utils/Header";
@@ -38,7 +38,7 @@ const PurchaseOrder = () => {
     ]);
     const tableRefs = useRef([]);
     const inputRefs = useRef([]);
-    const [selectionItem, setSelectionItem] = useState("");
+    const [selectionItem] = useState("");
     const [headerData, setHeaderData] = useState({
         customerName: '',
         voucherNo: '',
@@ -49,13 +49,12 @@ const PurchaseOrder = () => {
     const [narration, setNarration] = useState("");
     const [createdBy, setCreatedBy] = useState("");
     const [approvedBy, setApprovedBy] = useState("");
-    const [stockItem] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState(0);
     const [focusedRow, setFocusedRow] = useState(null)
-    const [filteredStockItem, setFilterdStockItem] = useState(stockItem);
-    const display = tableData.length > 1 ? [{ label: "♦ End of List" }, ...filteredStockItem] : filteredStockItem
-    const [totalQuantity, setTotalQuantity] = useState("");
-    const [totalAmount, setTotalAmount] = useState("");
+    const setInputRef = useCallback(
+        (index) => (el) => {
+            inputRefs.current[index] = el;
+        }, []
+    );
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -116,17 +115,6 @@ const PurchaseOrder = () => {
             fetchOrderData();
         }
     }, [id]);
-
-    // const handleInputChange = (e, rowIndex) => {
-    //     const { value, name } = e.target;
-    //     const updatedData = [...tableData];
-    //     updatedData[rowIndex][name] = value;
-    //     setTableData(updatedData);
-    //     if (name === 'description') {
-    //         const selectedProductItem = stockItem.filter((item) => item.label.toLowerCase().includes(value.toLowerCase()))
-    //         setFilterdStockItem(selectedProductItem)
-    //     }
-    // };
 
     const handleKeyDown = (e, rowIndex, colIndex) => {
         if (e.key === "Enter" && e.target.value.trim() !== "") {
@@ -211,52 +199,6 @@ const PurchaseOrder = () => {
         await axios.post('/transact/save', data);
     };
 
-    const handleSelect = (e, item, rowIndex) => {
-        if (selectedProduct < display.length) {
-            if (e.key === "ArrowUp" && selectedProduct > 0) {
-                setSelectedProduct((prev) => prev - 1);
-            } else if (
-                e.key === "ArrowDown" &&
-                selectedProduct < display.length - 1
-            ) {
-                setSelectedProduct((prev) => prev + 1);
-            } else if (e.key === "Enter" && selectedProduct >= 0) {
-                onSelected(e, item[selectedProduct], rowIndex);
-            } else if (e.key === "Backspace") {
-                if (e.target.value !== "") {
-                    return;
-                } else {
-                    if (rowIndex > 0) {
-                        const prevRowIndex = rowIndex - 1;
-                        const prevRow = prevRowIndex * 2 + 1;
-                        e.preventDefault();
-                        tableRefs.current[prevRow]?.focus();
-                    } else {
-                        e.preventDefault();
-                        inputRefs.current[1]?.focus();
-                        inputRefs.current[1].setSelectionRange(0, 0);
-                    }
-                }
-            }
-        }
-    };
-
-    const onSelected = (e, item, rowIndex) => {
-        const updatedTable = [...tableData];
-        updatedTable[rowIndex].description = item.label;
-        setSelectionItem(item.label);
-        if (item.label !== "♦ End of List") {
-            setShowSubForm(true);
-        } else {
-            setShowSubForm(false);
-            e.preventDefault()
-            inputRefs.current[3]?.focus()
-            const updated = tableData.filter((_, index) => index !== rowIndex);
-            setTableData(updated)
-        }
-        setShowProduct(false);
-    };
-
     const afterAllocation = (row) => {
         setTimeout(() => {
             tableRefs.current[row * 2 + 1]?.focus();
@@ -267,34 +209,26 @@ const PurchaseOrder = () => {
         tableRefs.current = tableRefs.current.filter(ref => ref !== null);
     }, [tableData])
 
-    const handleTotalQty = () => {
-        const qty = tableData.reduce(
-            (sum, alloc) => {
-                const num = typeof alloc.quantity === 'number' ? alloc.quantity : parseFloat(alloc.quantity.replace(/,/g, '')) || 0
-                return sum + num
-            }, 0
-        );
-        if (!isNaN(qty)) {
-            setTotalQuantity(parseFloat(qty).toFixed(2));
-        }
-    };
+    const totalQuantity = useMemo(() => {
+        const qty = tableData.reduce((sum, alloc) => {
+            const num =
+                typeof alloc.quantity === 'number'
+                    ? alloc.quantity
+                    : parseFloat(alloc.quantity?.toString().replace(/,/g, '')) || 0;
+            return sum + num;
+        }, 0);
 
-    const handleTotalAmount = () => {
+        return qty.toFixed(2);
+    }, [tableData]);
+
+    const totalAmount = useMemo(() => {
         const amt = tableData.reduce(
-            (sum, alloc) => sum + parseFloat(alloc.amount),
+            (sum, alloc) => sum + (parseFloat(alloc.amount) || 0),
             0
         );
-        if (!isNaN(amt)) setTotalAmount(parseFloat(amt).toFixed(2));
-    };
 
-    useEffect(() => {
-        handleTotalQty();
-        handleTotalAmount();
-    }, [tableData])
-
-    useEffect(() => {
-        console.log("PARENT STATE:", approvedBy);
-    }, [approvedBy]);
+        return amt.toFixed(2);
+    }, [tableData]);
 
     return (
         <>
@@ -308,8 +242,8 @@ const PurchaseOrder = () => {
                     <Header
                         title="Purchase Order"
                         inputRefs={inputRefs}
+                        setInputRef={setInputRef}
                         data={headerData}
-                        setData={setHeaderData}
                         tableRefs={tableRefs}
                     />
                     <div className="h-112.5 overflow-auto">
@@ -451,6 +385,7 @@ const PurchaseOrder = () => {
                         narration={narration}
                         setNarration={setNarration}
                         inputRefs={inputRefs}
+                        setInputRef={setInputRef}
                         handleFormSubmit={handleFormSubmit}
                         createdBy={createdBy}
                         setCreatedBy={setCreatedBy}

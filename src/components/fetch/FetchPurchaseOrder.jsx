@@ -63,13 +63,13 @@ const FetchPurchaseOrder = () => {
         setFocusedCol(prev => (prev > 0 ? prev - 1 : 0));
         break;
 
-      case 'Enter':
+      case 'Enter': {
         const selectedOrder = filteredOrders[focusedIndex];
         if (selectedOrder) {
           navigate(`/update_purchase_order/${selectedOrder.id}`);
         }
         break;
-
+      }
       default:
         break;
     }

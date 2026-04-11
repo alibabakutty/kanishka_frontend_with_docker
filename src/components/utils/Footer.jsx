@@ -1,19 +1,12 @@
-import { useEffect } from "react";
 
 const Footer = ({
     narration,
-    // setNarration,
     inputRefs,
-    // handleFormSubmit,
+    setInputRef,
     createdBy = '',
-    // setCreatedBy,
     approvedBy = '',
-    // setApprovedBy,
     navigate
 }) => {
-    useEffect(() => {
-        console.log("CHILD STATE:", approvedBy);
-    }, [approvedBy]);
     return (
         <div className="flex justify-between border border-slate-400">
             <div className="">
@@ -22,9 +15,9 @@ const Footer = ({
                 </label>
                 <span className="mr-2">:</span>
                 <input type="text"
-                    ref={(el) => (inputRefs.current[3] = el)}
+                    ref={setInputRef(3)}
                     name="narration"
-                    value={narration}
+                    value={narration || ""}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
@@ -50,8 +43,8 @@ const Footer = ({
                     <input
                         type="text"
                         id="createdBy"
-                        value={createdBy}
-                        ref={(el) => (inputRefs.current[4] = el)}
+                        value={createdBy || ""}
+                        ref={setInputRef(4)}
                         // onChange={(e) => setCreatedBy(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -77,8 +70,8 @@ const Footer = ({
                     <input
                         type="text"
                         id="approvedBy"
-                        value={approvedBy}
-                        ref={(el) => (inputRefs.current[5] = el)}
+                        value={approvedBy || ""}
+                        ref={setInputRef(5)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();

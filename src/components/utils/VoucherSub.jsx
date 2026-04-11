@@ -11,9 +11,6 @@ const VoucherSub = ({
 	afterAllocation,
 }) => {
 	const inputRefs = useRef([]);
-	const [totalQuantity, setTotalQuantity] = useState("");
-	const [totalAmount, setTotalAmount] = useState("");
-	const [showLocation, setShowLocation] = useState(false);
 
 	const [location] = useState([
 		{ label: "♦ Any" },
@@ -22,84 +19,66 @@ const VoucherSub = ({
 		{ label: "East Location" },
 		{ label: "West Location" },
 	]);
-	const [filteredLocation, setFilteredLocation] = useState(location);
-	const [focusedRow, setFocusedRow] = useState(0);
+	const [filteredLocation] = useState(location);
 	const [selectedLocation, setSelectedLocation] = useState(0);
 	const updateClose = () => {
 		isClose(false);
 	};
+	const totalQuantity = new Intl.NumberFormat("en-IN", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2
+	}).format(
+		allocation.reduce((sum, alloc) => {
+			const num = typeof alloc.quantity === 'number'
+				? alloc.quantity
+				: parseFloat(alloc.quantity?.replace(/,/g, '')) || 0;
+			return sum + num;
+		}, 0)
+	);
 
-	useEffect(() => {
-		handleTotalAmount()
-		handleTotalQty()
-	}, [])
-
-	// calculate Total 
-	const handleTotal = (e, index) => {
-		const { name } = e.target;
-		const updated = [...orderData]
-		const allocations = allocation[index]
-
-
-		if ((name === 'quantity' && e.target.value !== "" && e.target.value > 0) || (name === 'rate' && e.target.value !== "") || name === 'discount') {
-			const qty =
-				typeof allocations.quantity === 'number'
-					? allocations.quantity
-					: parseFloat(allocations.quantity.replace(/,/g, '')) || 0;
-			const rate =
-				typeof allocations.rate === 'number'
-					? allocations.rate
-					: parseFloat(allocations.rate.replace(/,/g, '')) || 0;
-			const discount =
-				typeof allocations.discount === 'number'
-					? allocations.discount
-					: parseFloat(allocations.discount.replace(/,/g, '')) || 0;
-
-
-			if (qty && rate) {
-				allocations.amount =
-					qty && rate ? qty * rate - (qty * rate * discount) / 100 : '';
-			}
-		}
-		setOrderData(updated)
-
-	}
-	// Input change Handler
-	const handleInputChange = (e, index) => {
-		const { value, name } = e.target;
-		const updated = [...orderData];
-		const allocations = allocation[index];
-		allocations[name] = value;
-		setOrderData(updated);
-
-		if (name === "location") {
-			const locations = location.filter((item) =>
-				item.label.toLowerCase().includes(value)
-			);
-			setFilteredLocation(locations);
-		}
-	};
+	const totalAmount = new Intl.NumberFormat("en-IN", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2
+	}).format(
+		allocation.reduce((sum, alloc) => {
+			const num = typeof alloc.amount === 'number'
+				? alloc.amount
+				: parseFloat(alloc.amount?.replace(/,/g, '')) || 0;
+			return sum + num;
+		}, 0)
+	);
 
 	// DueDate days adding prefix
 	const addDueDay = (e, item, index) => {
 		if (e.key === 'Enter') {
 			const regex = /^\d+$/;
+
 			if (regex.test(item)) {
 				const updated = [...orderData];
-				const allocations = allocation[index];
-				allocations.dueOn = item + " Days";
+
+				updated[row].allocation = updated[row].allocation.map((alloc, i) =>
+					i === index
+						? { ...alloc, dueOn: item + " Days" }
+						: alloc
+				);
+
 				setOrderData(updated);
-				inputRefs.current[index * 8 + 1]?.focus()
-			}
-			if (item.trim() === "" && allocation.length - 1 > 0) {
-				const updated = [...orderData];
-				updated[row].allocation = allocation.filter((item) => item.dueOn !== "");
-				setOrderData(updated)
-				updateAllocation()
-			} else if (item.trim() !== "") {
-				inputRefs.current[index * 8 + 1]?.focus()
+
+				inputRefs.current[index * 8 + 1]?.focus();
 			}
 
+			if (item.trim() === "" && allocation.length - 1 > 0) {
+				const updated = [...orderData];
+
+				updated[row].allocation = allocation.filter(
+					(item) => item.dueOn !== ""
+				);
+
+				setOrderData(updated);
+				updateAllocation();
+			} else if (item.trim() !== "") {
+				inputRefs.current[index * 8 + 1]?.focus();
+			}
 		}
 	};
 
@@ -177,26 +156,32 @@ const VoucherSub = ({
 		}, 0);
 	};
 
-	const updateAllocation = () => {
+	const updateAllocation = React.useCallback(() => {
 		const newRow = [...orderData];
+
 		newRow[row].dueOn = newRow[row].allocation[0].dueOn;
+
 		newRow[row].quantity = parseFloat(
 			newRow[row].allocation.reduce(
 				(sum, alloc) => sum + parseFloat(alloc.quantity),
 				0
 			)
 		).toFixed(2);
+
 		newRow[row].rate = parseFloat(newRow[row].allocation[0].rate || 0).toFixed(2);
 		newRow[row].uom = newRow[row].allocation[0].uom;
 		newRow[row].discount = newRow[row].allocation[0].discount;
+
 		newRow[row].amount = parseFloat(
 			newRow[row].allocation.reduce((sum, alloc) => sum + alloc.amount, 0)
 		).toFixed(2);
+
 		setOrderData(newRow);
 		afterAllocation(row);
 
 		isClose(false);
-	}
+	}, [orderData, row, afterAllocation, isClose, setOrderData]);
+
 	useEffect(() => {
 		const handleKeys = (e) => {
 			if (e.ctrlKey && e.key === "a") {
@@ -207,16 +192,25 @@ const VoucherSub = ({
 			}
 		};
 		window.addEventListener("keydown", handleKeys);
-	}, []);
+		return () => {
+			window.removeEventListener("keydown", handleKeys);
+		};
+	}, [isClose, updateAllocation]);
 
-	const handleLocation = (item, extraPrams) => {
-		const updatedData = [...orderData];
-		const allocations = allocation[extraPrams];
-		allocations.location = item;
-		setOrderData(updatedData);
+	const handleLocation = (item, index) => {
+		const updated = [...orderData];
 
-		inputRefs.current[extraPrams * 8 + 2]?.focus();
+		updated[row].allocation = updated[row].allocation.map((alloc, i) =>
+			i === index
+				? { ...alloc, location: item }
+				: alloc
+		);
+
+		setOrderData(updated);
+
+		inputRefs.current[index * 8 + 2]?.focus();
 	};
+
 	const handleLocationSelect = (e, rowIndex) => {
 		const key = e.key;
 		if (key === "ArrowUp" && selectedLocation > 0) {
@@ -225,54 +219,9 @@ const VoucherSub = ({
 			setSelectedLocation((prev) => prev + 1);
 		} else if (key === "Enter") {
 			handleLocation(filteredLocation[selectedLocation].label, rowIndex);
-			setShowLocation(false);
 			setSelectedLocation(0);
 		}
 	}
-	const numberFormat = (e, index) => {
-		const { name, value } = e.target;
-		const cleanNumber = typeof value === 'number' ? value : parseFloat(value.replace(/,/g, ''))
-		if (isNaN(cleanNumber)) return ""
-		const result = new Intl.NumberFormat('en-In', {
-			maximumFractionDigits: 2,
-			minimumFractionDigits: 2
-		}).format(cleanNumber);
-		const updated = [...orderData]
-		const allocations = allocation[index]
-		allocations[name] = result
-		setOrderData(updated)
-	}
-	const handleTotalQty = () => {
-
-		const qty = allocation.reduce(
-			(sum, alloc) => {
-				const num = typeof alloc.quantity === 'number' ? alloc.quantity : parseFloat(alloc.quantity.replace(/,/g, '')) || 0
-				return sum + num;
-			}, 0
-		);
-		if (!isNaN(qty) && qty !== null) {
-			const result = new Intl.NumberFormat("en-In", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(qty)
-			console.log(result)
-			setTotalQuantity(result);
-		}
-	};
-	const handleTotalAmount = () => {
-		const amt = allocation.reduce(
-			(sum, alloc) => {
-				const num =
-					typeof alloc.amount === 'number'
-						? alloc.amount
-						: parseFloat(alloc.amount.replace(/,/g, '')) || 0;
-				return sum + num;
-
-			}, 0
-		);
-
-		if (!isNaN(amt)) {
-			const result = new Intl.NumberFormat("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amt)
-			setTotalAmount(result);
-		}
-	};
 
 
 	return (
@@ -325,7 +274,7 @@ const VoucherSub = ({
 														type="text"
 														autoFocus="on"
 														name="dueOn"
-														value={allocate.dueOn}
+														value={allocate.dueOn || ""}
 														className="  outline-0  text-right focus:bg-[#fee8af] pr-0.5 w-full"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8] = el)
@@ -340,15 +289,12 @@ const VoucherSub = ({
 													<input
 														type="text"
 														name="location"
-														value={allocate.location}
+														value={allocate.location || ""}
 														className="outline-0 text-center focus:bg-[#fee8af]  pr-0.5 w-full font-semibold"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 1] = el)
 														}
-														onFocus={() => {
-															setShowLocation(true);
-															setFocusedRow(allocateIndex);
-														}}
+
 														onKeyDown={(e) =>
 															handleLocationSelect(e, allocateIndex)
 														}
@@ -360,7 +306,7 @@ const VoucherSub = ({
 														type="text"
 														autoComplete="off"
 														name="batchNo"
-														value={allocate.batchNo}
+														value={allocate.batchNo || ""}
 														className=" outline-0 focus:bg-[#fee8af]  pr-0.5 w-full font-semibold text-center"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 2] = el)
@@ -376,7 +322,7 @@ const VoucherSub = ({
 														autoComplete="off"
 														type="text"
 														name="quantity"
-														value={allocate.quantity}
+														value={allocate.quantity || ""}
 														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full appearance-none"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 3] = el)
@@ -398,7 +344,7 @@ const VoucherSub = ({
 														type="text"
 														autoComplete="off"
 														name="uom"
-														value={allocate.uom}
+														value={allocate.uom || ""}
 														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 4] = el)
@@ -416,7 +362,7 @@ const VoucherSub = ({
 														type="text"
 														autoComplete="off"
 														name="rate"
-														value={formatINR(allocate.rate)}
+														value={formatINR(allocate.rate || 0)}
 														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 5] = el)
@@ -434,7 +380,7 @@ const VoucherSub = ({
 														type="text"
 														autoComplete="off"
 														name="discount"
-														value={allocate.discount}
+														value={allocate.discount || ""}
 														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 6] = el)
@@ -452,7 +398,7 @@ const VoucherSub = ({
 														type="text"
 														autoComplete="off"
 														name="amount"
-														value={(formatINR(allocate.amount))}
+														value={(formatINR(allocate.amount || 0))}
 														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full "
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 7] = el)
