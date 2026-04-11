@@ -28,12 +28,12 @@ const FetchPurchaseOrder = () => {
   }, [searchTerm]);
 
   const handleKeyDown = useCallback((e) => {
-    if (e.key === 'Escape'){
+    if (e.key === 'Escape') {
       e.preventDefault();
       navigate(-1);
       return;
     }
-    
+
     if (filteredOrders.length === 0) return;
 
     if (e.key === 'ArrowDown') {
@@ -84,11 +84,16 @@ const FetchPurchaseOrder = () => {
     fetchOrders();
   }, []);
 
+  const grossTotal = filteredOrders.reduce(
+    (sum, order) => sum + (Number(order.totalAmount) || 0),
+    0
+  );
+
   if (loading) return <div className='p-4 text-center'>Loading orders...</div>;
   if (error) return <div className='p-4 text-red-500 text-center'>Error: {error}</div>
 
   return (
-    <div className="min-h-screen bg-white font-sans text-xs">
+    <div className="h-screen flex flex-col bg-white font-sans text-xs">
       {/* Top Blue Navbar */}
       <nav className="bg-[#003366] text-white px-4 py-2 flex justify-between items-center">
         <h1 className="text-lg font-bold tracking-tight">PURCHASE ORDER</h1>
@@ -123,7 +128,7 @@ const FetchPurchaseOrder = () => {
       </div>
 
       {/* Table Section */}
-      <div className="w-full">
+      <div className="flex-1 overflow-y-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-[#004d26] text-white text-left">
@@ -146,8 +151,8 @@ const FetchPurchaseOrder = () => {
                   key={order.id}
                   onClick={() => navigate(`/update_purchase_order/${order.id}`)}
                   className={`cursor-pointer border-b border-gray-200 transition-colors ${focusedIndex === index
-                      ? 'bg-yellow-100' // High contrast for focused row
-                      : index % 2 === 0 ? 'bg-[#fffbeb]' : 'bg-white'
+                    ? 'bg-yellow-100' // High contrast for focused row
+                    : index % 2 === 0 ? 'bg-[#fffbeb]' : 'bg-white'
                     }`}
                 >
                   <td className="px-1 py-0.5 text-[#003366] text-center">{index + 1}</td>
@@ -156,7 +161,7 @@ const FetchPurchaseOrder = () => {
                   <td className="px-1 py-0.5 pl-3">{order.orderNo}</td>
                   <td className="px-1 py-0.5 text-center">{formatDate(order.voucherDate)}</td>
                   <td className="px-1 py-0.5">{order.partyLedgerName}</td>
-                  <td className="px-1 py-0.5 text-right font-medium">
+                  <td className="px-1 py-0.5 text-right">
                     {formatINR(order.totalAmount)}
                   </td>
                   <td className="px-1 py-0.5 text-right capitalize">{order.createdBy}</td>
@@ -173,6 +178,22 @@ const FetchPurchaseOrder = () => {
             )}
           </tbody>
         </table>
+
+      </div>
+      {/* 🔥 Sticky Bottom Footer */}
+      <div className="bg-[#003366] text-white px-4 py-1 flex justify-between items-center sticky bottom-0">
+
+        {/* <div className="font-semibold">
+          Total Records: {filteredOrders.length}
+        </div> */}
+
+        <div className="font-semibold text-xs ">
+          Gross Total : 
+          <span className='ml-237'>
+            {formatINR(grossTotal)}
+          </span>
+        </div>
+
       </div>
     </div>
   );

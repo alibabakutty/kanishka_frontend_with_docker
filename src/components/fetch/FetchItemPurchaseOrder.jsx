@@ -145,11 +145,34 @@ const FetchItemPurchaseOrder = () => {
         fetchOrders();
     }, []);
 
+    const grossTotal = filteredOrders.reduce(
+        (sum, order) => sum + (Number(order.itemAmount) || 0),
+        0
+    );
+
+    const totals = useMemo(() => {
+        return filteredOrders.reduce(
+            (acc, order) => {
+                acc.qty += Number(order.billedQty) || 0;
+                acc.amount += Number(order.itemAmount) || 0;
+                return acc;
+            },
+            { qty: 0, amount: 0 }
+        );
+    }, [filteredOrders]);
+
+    const isFilterApplied = useMemo(() => {
+        return (
+            searchTerm.trim() !== '' ||
+            Object.values(filters).some((val) => val.trim() !== '')
+        );
+    }, [searchTerm, filters]);
+
     if (loading) return <div className="p-4 text-center">Loading orders...</div>;
     if (error) return <div className="p-4 text-red-500 text-center">Error: {error}</div>;
 
     return (
-        <div className="min-h-screen bg-white text-xs">
+        <div className="h-screen flex flex-col bg-white text-xs">
             {/* Navbar */}
             <nav className="bg-[#003366] text-white px-4 py-1 flex justify-between">
                 <h1 className="text-lg font-bold">PURCHASE ORDER</h1>
@@ -175,25 +198,25 @@ const FetchItemPurchaseOrder = () => {
             </div>
 
             {/* ✅ Horizontal Scroll Wrapper */}
-            <div className="w-full overflow-x-auto">
+            <div className="flex-1 overflow-auto">
                 <table className=" border-collapse min-w-[1500px]">
                     {/* Sticky Header */}
                     <thead className="sticky top-0 z-10">
                         <tr className="bg-green-800 text-white">
-                            <th>S.No</th>
-                            <th className='w-52'>Voucher Type</th>
+                            <th className='w-9'>S.No</th>
+                            <th className='w-52 text-left pl-2'>Voucher Type</th>
                             <th className='w-28'>Voucher No</th>
                             <th className='w-28'>PO No</th>
-                            <th className='w-28'>PO Date</th>
+                            <th className='w-28 text-left pl-2'>PO Date</th>
                             <th className='w-60'>Party Ledger Name</th>
-                            <th className='w-28'>PO Amount</th>
+                            <th className='w-28 text-right'>PO Amount</th>
                             <th className='w-60'>Item Name</th>
-                            <th className='w-20'>HSN</th>
+                            <th className='w-20 text-left pl-2'>HSN</th>
                             <th className='w-12'>GST %</th>
                             <th className='w-12'>Qty</th>
                             <th className='w-28'>Rate</th>
                             <th className='w-12'>UOM</th>
-                            <th className='w-24'>Item Amount</th>
+                            <th className='w-24'>Amount</th>
                             <th className='w-20'>Created By</th>
                             <th className='w-28'>Approved Status</th>
                         </tr>
@@ -221,16 +244,15 @@ const FetchItemPurchaseOrder = () => {
                                 onClick={() =>
                                     navigate(`/update_purchase_order/${order.id}`)
                                 }
-                                className={`cursor-pointer ${
-                                    focusedIndex === index
-                                        ? 'bg-yellow-100'
-                                        : index % 2 === 0
+                                className={`cursor-pointer ${focusedIndex === index
+                                    ? 'bg-yellow-100'
+                                    : index % 2 === 0
                                         ? 'bg-yellow-50'
                                         : ''
-                                }`}
+                                    }`}
                             >
-                                <td className='pl-1'>{index + 1}</td>
-                                <td>{order.voucherType}</td>
+                                <td className='pl-2'>{index + 1}</td>
+                                <td className='pl-2'>{order.voucherType}</td>
                                 <td>{order.voucherNumber}</td>
                                 <td>{order.orderNo}</td>
                                 <td>{formatDate(order.voucherDate)}</td>
@@ -249,6 +271,34 @@ const FetchItemPurchaseOrder = () => {
                         ))}
                     </tbody>
                 </table>
+            </div>
+            {/* 🔥 Sticky Bottom Footer */}
+            <div className="bg-[#003366] text-white px-4 py-1 sticky bottom-0">
+
+                <div className="flex items-center">
+
+                    {/* Empty space */}
+                    <div className=" text-right font-semibold">
+                        Total:
+                    </div>
+
+                    {/* Qty Total */}
+                    <div className="text-right font-semibold ml-[1025px]">
+                        {isFilterApplied ? totals.qty.toFixed(2) : ''}
+                    </div>
+
+                    {/* Skip Rate + UOM */}
+                    <div className=""></div>
+
+                    {/* Amount Total */}
+                    <div className="text-right font-bold ml-[145px]">
+                        {isFilterApplied ? formatINR(Math.abs(totals.amount)) : ''}
+                    </div>
+
+                    <div className="col-span-2"></div>
+
+                </div>
+
             </div>
         </div>
     );
