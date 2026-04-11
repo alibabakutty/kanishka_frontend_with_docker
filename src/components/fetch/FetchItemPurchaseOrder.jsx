@@ -30,6 +30,8 @@ const FetchItemPurchaseOrder = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [focusedCol, setFocusedCol] = useState(0);
     const totalColumns = 16;
+    let lastOrderId = null;
+
     // Flatten inventory entries
     const flattenedOrders = useMemo(() => {
         return orders.flatMap((order) =>
@@ -265,32 +267,32 @@ const FetchItemPurchaseOrder = () => {
 
             {/* ✅ Horizontal Scroll Wrapper */}
             <div className="flex-1 overflow-auto">
-                <table className=" border-collapse min-w-375">
+                <table className=" border-collapse min-w-[1600px] border border-gray-400">
                     {/* Sticky Header */}
                     <thead className="sticky top-0 z-10">
                         <tr className="bg-green-800 text-white">
-                            <th className='w-9'>S.No</th>
-                            <th className='w-52 text-left pl-2'>Voucher Type</th>
-                            <th className='w-32'>Voucher No</th>
-                            <th className='w-32'>PO No</th>
-                            <th className='w-28 text-left pl-2'>PO Date</th>
-                            <th className='w-60'>Party Ledger Name</th>
-                            <th className='w-28 text-right pr-3'>PO Amount</th>
-                            <th className='w-60'>Item Name</th>
-                            <th className='w-20 text-left pl-4'>HSN</th>
-                            <th className='w-12'>GST %</th>
-                            <th className='w-12'>Qty</th>
-                            <th className='w-28 text-right pr-5'>Rate</th>
-                            <th className='w-12'>UOM</th>
-                            <th className='w-24'>Amount</th>
-                            <th className='w-20'>Created By</th>
-                            <th className='w-32'>Approved Status</th>
+                            <th className="border border-gray-400 w-9">S.No</th>
+                            <th className="border border-gray-400 w-52 text-left pl-2">Voucher Type</th>
+                            <th className="border border-gray-400 w-32">Voucher No</th>
+                            <th className="border border-gray-400 w-32">PO No</th>
+                            <th className="border border-gray-400 w-28 text-left pl-2">PO Date</th>
+                            <th className="border border-gray-400 w-86">Party Ledger Name</th>
+                            <th className="border border-gray-400 w-28 text-right pr-3">PO Amount</th>
+                            <th className="border border-gray-400 w-60">Item Name</th>
+                            <th className="border border-gray-400 w-20 text-left pl-4">HSN</th>
+                            <th className="border border-gray-400 w-12">GST %</th>
+                            <th className="border border-gray-400 w-12">Qty</th>
+                            <th className="border border-gray-400 w-28 text-right pr-5">Rate</th>
+                            <th className="border border-gray-400 w-12">UOM</th>
+                            <th className="border border-gray-400 w-24">Amount</th>
+                            <th className="border border-gray-400 w-20">Created By</th>
+                            <th className="border border-gray-400 w-32">Approved Status</th>
                         </tr>
 
                         {/* Filters */}
                         {showFilters && (
                             <tr className="bg-gray-200">
-                                <th></th>
+                                <th className='border border-gray-400 px-1 py-0.5'></th>
                                 {Object.keys(filters).map((key) => (
                                     <th key={key}>
                                         <input
@@ -309,6 +311,9 @@ const FetchItemPurchaseOrder = () => {
 
                     <tbody>
                         {filteredOrders.map((order, rowIndex) => {
+                            const isSameOrder = lastOrderId === order.id;
+                            lastOrderId = order.id;
+
                             const rowData = [
                                 rowIndex + 1,
                                 order.voucherType,
@@ -316,7 +321,7 @@ const FetchItemPurchaseOrder = () => {
                                 order.orderNo,
                                 formatDate(order.voucherDate),
                                 order.partyLedgerName,
-                                formatINR(order.totalAmount),
+                                isSameOrder ? '' : formatINR(order.totalAmount),
                                 order.itemName,
                                 order.hsnCode,
                                 `${order.gstPercentage}%`,
@@ -342,7 +347,7 @@ const FetchItemPurchaseOrder = () => {
                                             data-row={rowIndex}
                                             data-col={colIndex}
                                             className={`
-                            px-1
+                            border border-gray-300 px-1
                             ${focusedIndex === rowIndex && focusedCol === colIndex
                                                     ? 'bg-yellow-200 border border-black'
                                                     : focusedIndex === rowIndex

@@ -164,22 +164,22 @@ const FetchPurchaseOrder = () => {
       </div>
 
       {/* Table Section */}
-      <div className="flex-1 overflow-y-auto">
-        <table className="w-full border-collapse">
+      <div className="flex-1 overflow-auto">
+        <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-[#004d26] text-white text-left">
-              <th className="px-px py-0.5 font-semibold border-r border-gray-500 text-center">S. No</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Voucher Type</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Voucher No</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO No</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO Date</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Party Ledger Name</th>
-              <th className="px-1 py-0.5 font-semibold text-right">PO Amount</th>
-              <th className="px-1 py-0.5 font-semibold text-right">Created By</th>
-              <th className="px-1 py-0.5 font-semibold text-right">Approved Status</th>
-              {/* <th className="px-1 py-0.5 font-semibold text-right">Tab Status</th> */}
+              <th className="border border-gray-400 text-center">S. No</th>
+              <th className="border border-gray-400 text-center">Voucher Type</th>
+              <th className="border border-gray-400 text-center">Voucher No</th>
+              <th className="border border-gray-400 text-center">PO No</th>
+              <th className="border border-gray-400 text-center">PO Date</th>
+              <th className="border border-gray-400 text-center">Party Ledger Name</th>
+              <th className="border border-gray-400 text-right pr-2">PO Amount</th>
+              <th className="border border-gray-400 text-right pr-2">Created By</th>
+              <th className="border border-gray-400 text-right pr-2">Approved Status</th>
             </tr>
           </thead>
+
           <tbody>
             {filteredOrders.length > 0 ? (
               filteredOrders.map((order, rowIndex) => {
@@ -207,22 +207,22 @@ const FetchPurchaseOrder = () => {
                         data-row={rowIndex}
                         data-col={colIndex}
                         className={`
-                px-1 py-0.5 border-b border-gray-200
-                ${focusedIndex === rowIndex && focusedCol === colIndex
-                            ? 'bg-yellow-200 border border-black'
+                    border border-gray-200 px-1 py-0.5
+                    ${focusedIndex === rowIndex && focusedCol === colIndex
+                            ? 'bg-yellow-200 border-2 border-black'
                             : focusedIndex === rowIndex
                               ? 'bg-yellow-100'
                               : rowIndex % 2 === 0
                                 ? 'bg-[#fffbeb]'
                                 : 'bg-white'
                           }
-                ${colIndex === 0 || colIndex === 4
+                    ${colIndex === 0 || colIndex === 4
                             ? 'text-center'
                             : colIndex === 6 || colIndex === 7 || colIndex === 8
-                              ? 'text-right'
+                              ? 'text-right pr-2'
                               : 'text-left pl-2'
                           }
-              `}
+                  `}
                       >
                         {cell}
                       </td>
@@ -239,8 +239,8 @@ const FetchPurchaseOrder = () => {
             )}
           </tbody>
         </table>
-
       </div>
+
       {/* 🔥 Sticky Bottom Footer */}
       <div className="bg-[#003366] text-white px-4 py-1 flex justify-between items-center sticky bottom-0">
 
