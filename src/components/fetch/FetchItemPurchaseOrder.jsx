@@ -28,6 +28,8 @@ const FetchItemPurchaseOrder = () => {
 
     const navigate = useNavigate();
     const [showFilters, setShowFilters] = useState(false);
+    const [focusedCol, setFocusedCol] = useState(0);
+    const totalColumns = 16;
     // Flatten inventory entries
     const flattenedOrders = useMemo(() => {
         return orders.flatMap((order) =>
@@ -90,22 +92,43 @@ const FetchItemPurchaseOrder = () => {
 
             if (filteredOrders.length === 0) return;
 
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                setFocusedIndex((prev) =>
-                    prev < filteredOrders.length - 1 ? prev + 1 : prev
-                );
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-            } else if (e.key === 'Enter') {
-                const selected = filteredOrders[focusedIndex];
-                if (selected) {
-                    navigate(`/update_purchase_order/${selected.id}`);
-                }
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    setFocusedIndex((prev) =>
+                        prev < filteredOrders.length - 1 ? prev + 1 : prev
+                    );
+                    break;
+
+                case 'ArrowUp':
+                    e.preventDefault();
+                    setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+                    break;
+
+                case 'ArrowRight':
+                    e.preventDefault();
+                    setFocusedCol((prev) =>
+                        prev < totalColumns - 1 ? prev + 1 : prev
+                    );
+                    break;
+
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    setFocusedCol((prev) => (prev > 0 ? prev - 1 : 0));
+                    break;
+
+                case 'Enter':
+                    const selected = filteredOrders[focusedIndex];
+                    if (selected) {
+                        navigate(`/update_purchase_order/${selected.id}`);
+                    }
+                    break;
+
+                default:
+                    break;
             }
         },
-        [filteredOrders, focusedIndex, navigate]
+        [filteredOrders, focusedIndex, focusedCol, navigate]
     );
 
     useEffect(() => {
@@ -167,6 +190,18 @@ const FetchItemPurchaseOrder = () => {
             Object.values(filters).some((val) => val.trim() !== '')
         );
     }, [searchTerm, filters]);
+
+    useEffect(() => {
+        const el = document.querySelector(
+            `[data-row="${focusedIndex}"][data-col="${focusedCol}"]`
+        );
+        el?.scrollIntoView({
+            block: 'nearest',
+            inline: 'nearest'
+        });
+    }, [focusedIndex, focusedCol]);
+
+
 
     if (loading) return <div className="p-4 text-center">Loading orders...</div>;
     if (error) return <div className="p-4 text-red-500 text-center">Error: {error}</div>;
@@ -236,20 +271,20 @@ const FetchItemPurchaseOrder = () => {
                         <tr className="bg-green-800 text-white">
                             <th className='w-9'>S.No</th>
                             <th className='w-52 text-left pl-2'>Voucher Type</th>
-                            <th className='w-28'>Voucher No</th>
-                            <th className='w-28'>PO No</th>
+                            <th className='w-32'>Voucher No</th>
+                            <th className='w-32'>PO No</th>
                             <th className='w-28 text-left pl-2'>PO Date</th>
                             <th className='w-60'>Party Ledger Name</th>
-                            <th className='w-28 text-right'>PO Amount</th>
+                            <th className='w-28 text-right pr-3'>PO Amount</th>
                             <th className='w-60'>Item Name</th>
-                            <th className='w-20 text-left pl-2'>HSN</th>
+                            <th className='w-20 text-left pl-4'>HSN</th>
                             <th className='w-12'>GST %</th>
                             <th className='w-12'>Qty</th>
-                            <th className='w-28'>Rate</th>
+                            <th className='w-28 text-right pr-5'>Rate</th>
                             <th className='w-12'>UOM</th>
                             <th className='w-24'>Amount</th>
                             <th className='w-20'>Created By</th>
-                            <th className='w-28'>Approved Status</th>
+                            <th className='w-32'>Approved Status</th>
                         </tr>
 
                         {/* Filters */}
@@ -273,37 +308,61 @@ const FetchItemPurchaseOrder = () => {
                     </thead>
 
                     <tbody>
-                        {filteredOrders.map((order, index) => (
-                            <tr
-                                key={index}
-                                onClick={() =>
-                                    navigate(`/update_purchase_order/${order.id}`)
-                                }
-                                className={`cursor-pointer ${focusedIndex === index
-                                    ? 'bg-yellow-100'
-                                    : index % 2 === 0
-                                        ? 'bg-yellow-50'
-                                        : ''
-                                    }`}
-                            >
-                                <td className='pl-2'>{index + 1}</td>
-                                <td className='pl-2'>{order.voucherType}</td>
-                                <td>{order.voucherNumber}</td>
-                                <td>{order.orderNo}</td>
-                                <td>{formatDate(order.voucherDate)}</td>
-                                <td className=''>{order.partyLedgerName}</td>
-                                <td className='text-right'>{formatINR(order.totalAmount)}</td>
-                                <td className='pl-2'>{order.itemName}</td>
-                                <td>{order.hsnCode}</td>
-                                <td>{order.gstPercentage}%</td>
-                                <td className='text-right'>{order.billedQty.toFixed(2)}</td>
-                                <td className='text-right'>{formatINR(order.itemRate)}</td>
-                                <td className='pl-3 capitalize'>{order.itemUom}</td>
-                                <td className='text-right'>{formatINR(Math.abs(order.itemAmount))}</td>
-                                <td className='pl-3'>{order.createdBy}</td>
-                                <td>{order.approvedBy}</td>
-                            </tr>
-                        ))}
+                        {filteredOrders.map((order, rowIndex) => {
+                            const rowData = [
+                                rowIndex + 1,
+                                order.voucherType,
+                                order.voucherNumber,
+                                order.orderNo,
+                                formatDate(order.voucherDate),
+                                order.partyLedgerName,
+                                formatINR(order.totalAmount),
+                                order.itemName,
+                                order.hsnCode,
+                                `${order.gstPercentage}%`,
+                                order.billedQty.toFixed(2),
+                                formatINR(order.itemRate),
+                                order.itemUom,
+                                formatINR(Math.abs(order.itemAmount)),
+                                order.createdBy,
+                                order.approvedBy
+                            ];
+
+                            return (
+                                <tr
+                                    key={rowIndex}
+                                    onClick={() =>
+                                        navigate(`/update_purchase_order/${order.id}`)
+                                    }
+                                    className="cursor-pointer"
+                                >
+                                    {rowData.map((cell, colIndex) => (
+                                        <td
+                                            // key={colIndex}
+                                            data-row={rowIndex}
+                                            data-col={colIndex}
+                                            className={`
+                            px-1
+                            ${focusedIndex === rowIndex && focusedCol === colIndex
+                                                    ? 'bg-yellow-200 border border-black'
+                                                    : focusedIndex === rowIndex
+                                                        ? 'bg-yellow-100'
+                                                        : rowIndex % 2 === 0
+                                                            ? 'bg-yellow-50'
+                                                            : ''
+                                                }
+                            ${colIndex === 0 || colIndex === 1 || colIndex === 4 || colIndex === 5 || colIndex === 7 || colIndex === 8 || colIndex === 9 || colIndex === 12
+                                                    ? 'text-left pl-2'
+                                                    : 'text-right'
+                                                }
+                        `}
+                                        >
+                                            {cell}
+                                        </td>
+                                    ))}
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
@@ -318,7 +377,7 @@ const FetchItemPurchaseOrder = () => {
                     </div>
 
                     {/* Qty Total */}
-                    <div className="text-right font-semibold ml-[1050px]">
+                    <div className="text-right font-semibold ml-[1020px]">
                         {isFilterApplied ? totals.qty.toFixed(2) : ''}
                     </div>
 

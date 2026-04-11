@@ -340,8 +340,8 @@ const PurchaseOrder = () => {
                                     <th className="w-22.5 text-right border border-slate-300">
                                         Rate
                                     </th>
-                                    <th className="w-17.5 text-center border border-slate-300">
-                                        Discount %
+                                    <th className="w-9.5 text-center border border-slate-300">
+                                        Disc %
                                     </th>
                                     {/* <th className="w-17.5 text-center border border-slate-300">
                                         Tax %

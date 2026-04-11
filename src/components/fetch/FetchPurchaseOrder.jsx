@@ -9,6 +9,8 @@ const FetchPurchaseOrder = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [focusedIndex, setFocusedIndex] = useState(0);
   const navigate = useNavigate();
+  const [focusedCol, setFocusedCol] = useState(0);
+  const totalColumns = 9;
 
   // filter logic
   const filteredOrders = orders.filter((order) => {
@@ -36,17 +38,40 @@ const FetchPurchaseOrder = () => {
 
     if (filteredOrders.length === 0) return;
 
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setFocusedIndex((prev) => (prev < filteredOrders.length - 1 ? prev + 1 : prev));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0))
-    } else if (e.key === 'Enter') {
-      const selectedOrder = filteredOrders[focusedIndex];
-      if (selectedOrder) {
-        navigate(`/update_purchase_order/${selectedOrder.id}`)
-      }
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(prev =>
+          prev < filteredOrders.length - 1 ? prev + 1 : prev
+        );
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(prev => (prev > 0 ? prev - 1 : 0));
+        break;
+
+      case 'ArrowRight':
+        e.preventDefault();
+        setFocusedCol(prev =>
+          prev < totalColumns - 1 ? prev + 1 : prev
+        );
+        break;
+
+      case 'ArrowLeft':
+        e.preventDefault();
+        setFocusedCol(prev => (prev > 0 ? prev - 1 : 0));
+        break;
+
+      case 'Enter':
+        const selectedOrder = filteredOrders[focusedIndex];
+        if (selectedOrder) {
+          navigate(`/update_purchase_order/${selectedOrder.id}`);
+        }
+        break;
+
+      default:
+        break;
     }
   }, [filteredOrders, focusedIndex, navigate]);
 
@@ -88,6 +113,17 @@ const FetchPurchaseOrder = () => {
     (sum, order) => sum + (Number(order.totalAmount) || 0),
     0
   );
+
+  useEffect(() => {
+    const el = document.querySelector(
+      `[data-row="${focusedIndex}"][data-col="${focusedCol}"]`
+    );
+
+    el?.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest'
+    });
+  }, [focusedIndex, focusedCol]);
 
   if (loading) return <div className='p-4 text-center'>Loading orders...</div>;
   if (error) return <div className='p-4 text-red-500 text-center'>Error: {error}</div>
@@ -146,32 +182,57 @@ const FetchPurchaseOrder = () => {
           </thead>
           <tbody>
             {filteredOrders.length > 0 ? (
-              filteredOrders.map((order, index) => (
-                <tr
-                  key={order.id}
-                  onClick={() => navigate(`/update_purchase_order/${order.id}`)}
-                  className={`cursor-pointer border-b border-gray-200 transition-colors ${focusedIndex === index
-                    ? 'bg-yellow-100' // High contrast for focused row
-                    : index % 2 === 0 ? 'bg-[#fffbeb]' : 'bg-white'
-                    }`}
-                >
-                  <td className="px-1 py-0.5 text-[#003366] text-center">{index + 1}</td>
-                  <td className="px-1 py-0.5">{order.voucherType}</td>
-                  <td className="px-1 py-0.5 pl-3">{order.voucherNumber}</td>
-                  <td className="px-1 py-0.5 pl-3">{order.orderNo}</td>
-                  <td className="px-1 py-0.5 text-center">{formatDate(order.voucherDate)}</td>
-                  <td className="px-1 py-0.5">{order.partyLedgerName}</td>
-                  <td className="px-1 py-0.5 text-right">
-                    {formatINR(order.totalAmount)}
-                  </td>
-                  <td className="px-1 py-0.5 text-right capitalize">{order.createdBy}</td>
-                  <td className="px-1 py-0.5 text-right">{order.approvedBy}</td>
-                  {/* <td className="px-1 py-0.5 text-right">{"Pending"}</td> */}
-                </tr>
-              ))
+              filteredOrders.map((order, rowIndex) => {
+                const rowData = [
+                  rowIndex + 1,
+                  order.voucherType,
+                  order.voucherNumber,
+                  order.orderNo,
+                  formatDate(order.voucherDate),
+                  order.partyLedgerName,
+                  formatINR(order.totalAmount),
+                  order.createdBy,
+                  order.approvedBy
+                ];
+
+                return (
+                  <tr
+                    key={order.id}
+                    onClick={() => navigate(`/update_purchase_order/${order.id}`)}
+                    className="cursor-pointer"
+                  >
+                    {rowData.map((cell, colIndex) => (
+                      <td
+                        key={colIndex}
+                        data-row={rowIndex}
+                        data-col={colIndex}
+                        className={`
+                px-1 py-0.5 border-b border-gray-200
+                ${focusedIndex === rowIndex && focusedCol === colIndex
+                            ? 'bg-yellow-200 border border-black'
+                            : focusedIndex === rowIndex
+                              ? 'bg-yellow-100'
+                              : rowIndex % 2 === 0
+                                ? 'bg-[#fffbeb]'
+                                : 'bg-white'
+                          }
+                ${colIndex === 0 || colIndex === 4
+                            ? 'text-center'
+                            : colIndex === 6 || colIndex === 7 || colIndex === 8
+                              ? 'text-right'
+                              : 'text-left pl-2'
+                          }
+              `}
+                      >
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
             ) : (
               <tr>
-                <td colSpan="5" className='text-center py-4 text-gray-500'>
+                <td colSpan="9" className="text-center py-4 text-gray-500">
                   No matching records found
                 </td>
               </tr>
@@ -183,12 +244,8 @@ const FetchPurchaseOrder = () => {
       {/* 🔥 Sticky Bottom Footer */}
       <div className="bg-[#003366] text-white px-4 py-1 flex justify-between items-center sticky bottom-0">
 
-        {/* <div className="font-semibold">
-          Total Records: {filteredOrders.length}
-        </div> */}
-
         <div className="font-semibold text-xs ">
-          Gross Total : 
+          Gross Total :
           <span className='ml-237'>
             {formatINR(grossTotal)}
           </span>
