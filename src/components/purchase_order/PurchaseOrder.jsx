@@ -354,7 +354,7 @@ const PurchaseOrder = () => {
                             <tbody>
                                 {tableData.map((item, rowIndex) => (
                                     <tr
-                                        className=" text-[13px] h-4.25 leading-4"
+                                        className=" text-[13px] h-4.25 leading-4 font-semibold"
                                         key={rowIndex}
                                     >
                                         <td className="text-center border border-slate-300 bg-white">
@@ -380,7 +380,7 @@ const PurchaseOrder = () => {
                                                 readOnly
                                             />
                                         </td>
-                                        <td className="text-center border border-slate-300 bg-white">
+                                        <td className="pl-1 border border-slate-300 bg-white">
                                             {item.hsn || ''}
                                             {/* {""} */}
                                         </td>
@@ -434,7 +434,7 @@ const PurchaseOrder = () => {
                             />
                         )}
                     </div>
-                    <div className="w-full flex justify-end">
+                    <div className="w-full flex justify-end mb-0.5">
                         <div className="border-y border-slate-400 h-5.5 w-117.5 flex items-center justify-between">
                             <span className="w-20 text-right text-[14px] font-semibold">
                                 {totalQuantity !== '0.00' ? totalQuantity : ''}

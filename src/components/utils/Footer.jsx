@@ -6,16 +6,16 @@ const Footer = ({
     inputRefs,
     // handleFormSubmit,
     createdBy = '',
-    setCreatedBy,
+    // setCreatedBy,
     approvedBy = '',
-    setApprovedBy,
+    // setApprovedBy,
     navigate
 }) => {
     useEffect(() => {
         console.log("CHILD STATE:", approvedBy);
     }, [approvedBy]);
     return (
-        <div className="flex justify-between">
+        <div className="flex justify-between border border-slate-400">
             <div className="">
                 <label htmlFor="narration" className="text-[14px] pl-1 mr-0.5">
                     Narration

@@ -118,7 +118,7 @@ const FetchPurchaseOrder = () => {
         />
 
         <span className="text-[#003366] font-bold text-xs pr-2 italic">
-          Purcahse Order Update
+          Purcahse Order Display
         </span>
       </div>
 
@@ -129,8 +129,8 @@ const FetchPurchaseOrder = () => {
             <tr className="bg-[#004d26] text-white text-left">
               <th className="px-px py-0.5 font-semibold border-r border-gray-500 text-center">S. No</th>
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Voucher Type</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Voucher No</th>
-              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO No</th>
+              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">Voucher No</th>
+              <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-right">PO No</th>
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">PO Date</th>
               <th className="px-1 py-0.5 font-semibold border-r border-gray-500 text-center">Party Ledger Name</th>
               <th className="px-1 py-0.5 font-semibold text-right">PO Amount</th>
@@ -152,8 +152,8 @@ const FetchPurchaseOrder = () => {
                 >
                   <td className="px-1 py-0.5 text-[#003366] text-center">{index + 1}</td>
                   <td className="px-1 py-0.5">{order.voucherType}</td>
-                  <td className="px-1 py-0.5 text-[#003366] text-center">{order.voucherNumber}</td>
-                  <td className="px-1 py-0.5 text-[#003366] text-center">{order.orderNo}</td>
+                  <td className="px-1 py-0.5 text-[#003366] text-right">{order.voucherNumber}</td>
+                  <td className="px-1 py-0.5 text-[#003366] text-right">{order.orderNo}</td>
                   <td className="px-1 py-0.5 text-center">{formatDate(order.voucherDate)}</td>
                   <td className="px-1 py-0.5">{order.partyLedgerName}</td>
                   <td className="px-1 py-0.5 text-right font-medium">

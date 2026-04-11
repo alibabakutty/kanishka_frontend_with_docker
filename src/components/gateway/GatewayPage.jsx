@@ -9,6 +9,7 @@ const GatewayPage = () => {
     { section: 'MASTERS', label: 'Customer Master', hotkey: 'C', path: '/customers' },
     { section: 'MASTERS', label: 'Inventory Master', hotkey: 'I', path: '/inventory' },
     { section: 'VOUCHERS', label: 'Purchase Order Register', hotkey: 'P', path: '/fetch_purchase_order' },
+    { section: 'VOUCHERS', label: 'PPO Item Register', path: '/fetch_item_purchase_order'},
     { section: 'SYSTEM', label: 'Quit', hotkey: 'Q', isQuit: true },
   ];
 
