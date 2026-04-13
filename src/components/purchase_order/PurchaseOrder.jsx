@@ -5,6 +5,7 @@ import Header from "../utils/Header";
 import VoucherSub from "../utils/VoucherSub";
 import Footer from "../utils/Footer";
 import { useNavigate, useParams } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 import { formatDate, formatINR } from "../utils/utils";
 
 const PurchaseOrder = () => {
@@ -61,7 +62,7 @@ const PurchaseOrder = () => {
         const fetchOrderData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8080/api/v1/purchase-orders/${id}`, {
+                const response = await axios.get(`${API_URL}/api/v1/purchase-orders/${id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 

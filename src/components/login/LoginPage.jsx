@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import loginIllustration from './../../assets/user_login.jpeg'; // Ensure path is correct
+const API_URL = import.meta.env.VITE_API_URL;
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -11,7 +12,7 @@ const LoginPage = () => {
     console.log('Credentials:', { username, password });
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

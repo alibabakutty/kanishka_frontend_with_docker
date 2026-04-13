@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const GatewayPage = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const GatewayPage = () => {
     const token = localStorage.getItem('token');
     if (token && token.includes(".")) {
       try {
-        await fetch('http://localhost:8080/api/auth/logout', {
+        await fetch(`${API_URL}/api/auth/logout`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
         });
