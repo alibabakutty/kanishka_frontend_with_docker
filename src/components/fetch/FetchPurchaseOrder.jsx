@@ -11,6 +11,7 @@ const FetchPurchaseOrder = () => {
   const navigate = useNavigate();
   const [focusedCol, setFocusedCol] = useState(0);
   const totalColumns = 9;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // filter logic
   const filteredOrders = orders.filter((order) => {
@@ -86,7 +87,7 @@ const FetchPurchaseOrder = () => {
         // retrieve the token you stored during login(usually in localstorage)
         const token = localStorage.getItem('token');
 
-        const response = await fetch('http://localhost:8080/api/v1/purchase-orders', {
+        const response = await fetch(`${API_URL}/api/v1/purchase-orders`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
