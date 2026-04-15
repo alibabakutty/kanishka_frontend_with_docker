@@ -156,7 +156,7 @@ const FetchItemPurchaseOrder = () => {
                 const token = localStorage.getItem('token');
 
                 const response = await fetch(
-                    `http://18.61.211.13:8080/api/v1/purchase-orders`,
+                    `${API_URL}/api/v1/purchase-orders`,
                     {
                         headers: {
                             'Content-Type': 'application/json',

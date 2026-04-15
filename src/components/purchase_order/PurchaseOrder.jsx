@@ -62,7 +62,7 @@ const PurchaseOrder = () => {
         const fetchOrderData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://18.61.211.13:8080/api/v1/purchase-orders/${id}`, {
+                const response = await axios.get(`${API_URL}/api/v1/purchase-orders/${id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -247,7 +247,7 @@ const PurchaseOrder = () => {
                         data={headerData}
                         tableRefs={tableRefs}
                     />
-                    <div className="h-112.5 overflow-auto">
+                    <div className="h-[calc(100vh-125px)] overflow-auto">
                         <table className="w-full">
                             <thead className=" bg-[#F9F3CC] text-[12px] border border-slate-300 font-semibold sticky top-0">
                                 <tr className="h-4.25 leading-4 border border-slate-300">

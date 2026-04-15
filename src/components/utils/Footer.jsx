@@ -10,7 +10,7 @@ const Footer = ({
     return (
         <div className="flex justify-between border border-slate-400">
             <div className="">
-                <label htmlFor="narration" className="text-[14px] pl-1 mr-0.5">
+                <label htmlFor="narration" className="text-[14px] pl-1 mr-0.5 font-semibold">
                     Narration
                 </label>
                 <span className="mr-2">:</span>
@@ -36,7 +36,7 @@ const Footer = ({
             </div>
             <div className="flex">
                 <div>
-                    <label className="text-[14px]" htmlFor="createdBy">
+                    <label className="text-[14px] font-semibold" htmlFor="createdBy">
                         Created By
                     </label>
                     <span className="mr-1">:</span>
@@ -58,12 +58,12 @@ const Footer = ({
                                 }
                             }
                         }}
-                        className="w-37.5 h-5 resize-none focus:bg-[#fee8af] overflow-hidden outline-0 focus:border focus:border-blue-400 border border-transparent text-[13px] capitalize"
+                        className="w-37.5 h-5 resize-none focus:bg-[#fee8af] overflow-hidden outline-0 focus:border focus:border-blue-400 border border-transparent text-[13px] capitalize font-semibold"
                         readOnly
                     />
                 </div>
                 <div>
-                    <label className="text-[14px] ml-1" htmlFor="approvedBy">
+                    <label className="text-[14px] ml-1 font-semibold" htmlFor="approvedBy">
                         Approved By
                     </label>
                     <span className="mr-1">:</span>
