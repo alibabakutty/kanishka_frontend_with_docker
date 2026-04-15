@@ -160,7 +160,7 @@ const FetchPurchaseOrder = () => {
         />
 
         <span className="text-[#003366] font-bold text-xs pr-2 italic">
-          Purchase Order Display
+          Purchase Order Voucher Display
         </span>
       </div>
 
