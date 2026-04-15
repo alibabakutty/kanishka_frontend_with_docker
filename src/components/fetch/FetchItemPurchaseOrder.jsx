@@ -228,7 +228,7 @@ const FetchItemPurchaseOrder = () => {
                     onClick={() => navigate(-1)}
                     className="bg-green-700 text-white px-3 py-1"
                 >
-                    ← Back
+                    ← Esc
                 </button>
 
                 <button

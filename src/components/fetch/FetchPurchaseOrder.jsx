@@ -148,7 +148,7 @@ const FetchPurchaseOrder = () => {
       {/* Sub-header / Search Area */}
       <div className="bg-[#f0f0f0] border-b border-gray-300 p-1 flex justify-between items-center">
         <button onClick={() => navigate(-1)} className="bg-[#004d26] text-white px-3 py-0.5 rounded text-xs flex items-center gap-1">
-          ← Back
+          ← Esc
         </button>
 
         <input

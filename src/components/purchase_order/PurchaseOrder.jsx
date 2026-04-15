@@ -332,7 +332,7 @@ const PurchaseOrder = () => {
                                         <td className="text-center border border-slate-300 bg-white">
                                             {item.uom}
                                         </td>
-                                        <td className="text-right border border-slate-300 bg-white">
+                                        <td className="text-right border border-slate-300 bg-white pr-1">
                                             {formatINR(item.rate)}
                                         </td>
                                         <td className="text-center border border-slate-300 bg-white">

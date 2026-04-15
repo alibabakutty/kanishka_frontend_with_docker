@@ -323,7 +323,7 @@ const VoucherSub = ({
 														type="text"
 														name="quantity"
 														value={allocate.quantity || ""}
-														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full appearance-none"
+														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full appearance-none font-semibold"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 3] = el)
 														}
@@ -345,7 +345,7 @@ const VoucherSub = ({
 														autoComplete="off"
 														name="uom"
 														value={allocate.uom || ""}
-														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full"
+														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full font-semibold"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 4] = el)
 														}
@@ -363,7 +363,7 @@ const VoucherSub = ({
 														autoComplete="off"
 														name="rate"
 														value={formatINR(allocate.rate || 0)}
-														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full"
+														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full font-semibold"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 5] = el)
 														}
@@ -381,7 +381,7 @@ const VoucherSub = ({
 														autoComplete="off"
 														name="discount"
 														value={allocate.discount || ""}
-														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full"
+														className="outline-0 text-right focus:bg-[#fee8af]  pr-0.5 w-full font-semibold"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 6] = el)
 														}
@@ -399,7 +399,7 @@ const VoucherSub = ({
 														autoComplete="off"
 														name="amount"
 														value={(formatINR(allocate.amount || 0))}
-														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full "
+														className="outline-0 text-right focus:bg-[#fee8af] pr-0.5 w-full font-semibold"
 														ref={(el) =>
 															(inputRefs.current[allocateIndex * 8 + 7] = el)
 														}
@@ -424,7 +424,7 @@ const VoucherSub = ({
 									{totalQuantity !== '0.00' ? totalQuantity : ""}
 								</span>
 								<span className="pr-2 font-semibold">
-									{totalAmount !== '0.00' ? totalAmount : ""}
+									{totalAmount !== '0.00' ? formatINR(totalAmount) : ""}
 								</span>
 							</div>
 						</div>
