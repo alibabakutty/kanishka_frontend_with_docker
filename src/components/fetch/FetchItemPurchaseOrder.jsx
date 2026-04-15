@@ -31,7 +31,6 @@ const FetchItemPurchaseOrder = () => {
     const [focusedCol, setFocusedCol] = useState(0);
     const totalColumns = 16;
     let lastOrderId = null;
-
     const API_URL = import.meta.env.VITE_API_URL;
 
     // Flatten inventory entries
@@ -157,7 +156,7 @@ const FetchItemPurchaseOrder = () => {
                 const token = localStorage.getItem('token');
 
                 const response = await fetch(
-                    `${API_URL}/api/v1/purchase-orders`,
+                    `http://18.61.211.13:8080/api/v1/purchase-orders`,
                     {
                         headers: {
                             'Content-Type': 'application/json',

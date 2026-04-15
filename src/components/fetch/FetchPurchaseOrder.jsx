@@ -87,7 +87,7 @@ const FetchPurchaseOrder = () => {
         // retrieve the token you stored during login(usually in localstorage)
         const token = localStorage.getItem('token');
 
-        const response = await fetch(`${API_URL}/api/v1/purchase-orders`, {
+        const response = await fetch(`http://18.61.211.13:8080/api/v1/purchase-orders`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

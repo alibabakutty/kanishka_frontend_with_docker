@@ -12,7 +12,7 @@ const LoginPage = () => {
     console.log('Credentials:', { username, password });
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`http://18.61.211.13:8080/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
