@@ -234,7 +234,7 @@ const PurchaseOrder = () => {
     return (
         <>
             <div className="w-full h-145">
-                <Title title="Order Voucher Creation" nav="/" />
+                <Title title="Order Voucher Creation" />
                 <form
                     action=""
                     className="relative"

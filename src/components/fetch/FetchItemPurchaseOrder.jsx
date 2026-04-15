@@ -388,7 +388,7 @@ const FetchItemPurchaseOrder = () => {
                     </div>
 
                     {/* Qty Total */}
-                    <div className="text-right font-semibold ml-[1060px]">
+                    <div className="text-right font-semibold ml-265">
                         {isFilterApplied ? totals.qty.toFixed(2) : ''}
                     </div>
 
@@ -396,7 +396,7 @@ const FetchItemPurchaseOrder = () => {
                     <div className=""></div>
 
                     {/* Amount Total */}
-                    <div className="text-right font-bold ml-[120px]">
+                    <div className="text-right font-bold ml-30">
                         {isFilterApplied ? formatINR(Math.abs(totals.amount)) : ''}
                     </div>
 
