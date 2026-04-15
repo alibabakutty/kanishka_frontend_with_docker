@@ -346,7 +346,7 @@ const FetchItemPurchaseOrder = () => {
                                     onClick={() =>
                                         navigate(`/update_purchase_order/${order.id}`)
                                     }
-                                    className="cursor-pointer"
+                                    className="cursor-pointer font-semibold"
                                 >
                                     {rowData.map((cell, colIndex) => (
                                         <td

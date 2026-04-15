@@ -60,7 +60,7 @@ const GatewayPage = () => {
       </div>
 
       <header className="z-10 bg-[#1e4e8a] text-white px-6 py-1 flex items-center justify-between shadow-md">
-        <h1 className="text-lg font-bold tracking-wide uppercase">Demo Web Purchase Order</h1>
+        <h1 className="text-lg font-bold tracking-wide uppercase">Kanishka Purchase Order</h1>
         <div className="flex items-center gap-4 text-sm">
           <span>Welcome, <strong>admin</strong></span>
           <button onClick={handleLogout} className="hover:underline">Logout</button>

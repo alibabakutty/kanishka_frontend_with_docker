@@ -208,7 +208,7 @@ const FetchPurchaseOrder = () => {
                         data-row={rowIndex}
                         data-col={colIndex}
                         className={`
-                    border border-gray-200 px-1 py-0.5
+                    border border-gray-200 px-1 py-0.5 font-semibold
                     ${focusedIndex === rowIndex && focusedCol === colIndex
                             ? 'bg-yellow-200 border-2 border-black'
                             : focusedIndex === rowIndex
