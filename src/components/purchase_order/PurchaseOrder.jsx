@@ -281,7 +281,7 @@ const PurchaseOrder = () => {
                                     {/* <th className="w-17.5 text-center border border-slate-300">
                                         Tax %
                                     </th> */}
-                                    <th className="w-25.75 text-right border border-slate-300">
+                                    <th className="w-25.75 text-right border border-slate-300 pr-1">
                                         Amount
                                     </th>
                                 </tr>
@@ -341,7 +341,7 @@ const PurchaseOrder = () => {
                                         </td>
                                         <td className="border border-slate-300 bg-white cursor-default">
                                             <input
-                                                className="w-full outline-0 text-right focus:bg-amber-300"
+                                                className="w-full outline-0 text-right focus:bg-amber-300 pr-1"
                                                 type="text"
                                                 name="amount"
                                                 value={formatINR(item.amount)}
@@ -369,14 +369,13 @@ const PurchaseOrder = () => {
                             />
                         )}
                     </div>
-                    <div className="w-full flex justify-end mb-0.5">
-                        <div className="border-y border-slate-400 h-5.5 w-117.5 flex items-center justify-between">
+                    <div className="w-full flex mb-0.5">
+                        <div className="border-y border-slate-400 h-5.5 w-117.5 flex items-center justify-between ml-222.5">
                             <span className="w-20 text-right text-[14px] font-semibold">
                                 {totalQuantity !== '0.00' ? totalQuantity : ''}
                             </span>
                             <span className="w-20 text-right text-[14px] font-semibold">
-                                <span className="mr-1">₹</span>
-                                {totalAmount !== '0.00' ? totalAmount : ''}
+                                {totalAmount !== '0.00' ? formatINR(totalAmount) : ''}
                             </span>
                         </div>
                     </div>

@@ -31,7 +31,7 @@ const Header = ({ title, inputRefs, setInputRef, data, tableRefs, isForex }) => 
 		<div className="flex justify-between border-b border-slate-300">
 			<div className="">
 				<div className="pt-1.5 flex leading-4">
-					<label className="bg-[#2a67b1] text-center text-[13px] text-white font-semibold  min-w-32 px-5">
+					<label className="bg-[#2a67b1] pl-1 text-[13px] text-white font-semibold  min-w-32 px-5">
 						{title || ""}
 					</label>
 					<span className="text-[14px] font-semibold ml-1">
@@ -41,7 +41,7 @@ const Header = ({ title, inputRefs, setInputRef, data, tableRefs, isForex }) => 
 				</div>
 
 				<div className="flex leading-4 px-1 pt-1.5">
-					<label htmlFor="custNo" className="w-32 text-[14px]">
+					<label htmlFor="custNo" className="w-32 text-[14px] font-semibold">
 						Party A/c Name
 					</label>
 					<div className="mr-0.5">:</div>
@@ -122,7 +122,7 @@ const Header = ({ title, inputRefs, setInputRef, data, tableRefs, isForex }) => 
 				<label className="text-[14px] text-right mr-3 font-semibold">{date.day}</label>
 
 				<div className="flex leading-4">
-					<label className="text-[13px] w-20">Order No</label>
+					<label className="text-[13px] w-20 font-semibold">Order No</label>
 					<div className="mx-0.5">:</div>
 					<input
 						type="text"
