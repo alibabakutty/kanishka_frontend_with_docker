@@ -234,7 +234,15 @@ const PurchaseOrder = () => {
     return (
         <>
             <div className="w-full h-145">
-                <Title title="Order Voucher Creation" />
+                <Title title="Order Voucher Creation" customerName={headerData.customerName} orderData={{
+                    voucherNo: headerData.voucherNo,
+                    voucherDate: headerData.voucherDate,
+                    orderNo: headerData.orderNo,
+                    items: tableData,
+                    totalAmount: totalAmount,
+                    narration: narration
+                }} />
+                
                 <form
                     action=""
                     className="relative"
@@ -374,7 +382,7 @@ const PurchaseOrder = () => {
                             <span className="w-20 text-right text-[14px] font-semibold">
                                 {totalQuantity !== '0.00' ? totalQuantity : ''}
                             </span>
-                            <span className="w-20 text-right text-[14px] font-semibold">
+                            <span className="w-24 text-right text-[14px] font-semibold">
                                 {totalAmount !== '0.00' ? formatINR(totalAmount) : ''}
                             </span>
                         </div>
