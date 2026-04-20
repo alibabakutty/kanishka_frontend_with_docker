@@ -12,6 +12,7 @@ const Title = ({ title, customerName, orderData }) => {
             setIsProcessing(true);
             const formattedItems = orderData?.items?.map(item => ({
                 name: item.description,
+                gst: item.gst,
                 qty: parseFloat(item.quantity),
                 rate: parseFloat(item.rate),
                 amount: item.amount,
