@@ -1,5 +1,11 @@
-import FetchItemPurchaseOrder from "../components/fetch/FetchItemPurchaseOrder";
-import FetchPurchaseOrder from "../components/fetch/FetchPurchaseOrder";
+import DayBook from "../components/fetch/Daybook/Daybook";
+import FetchDbItemwise from "../components/fetch/Daybook/DaybookItem";
+import FetchItemPurchaseOrder from "../components/fetch/General/FetchItemPurchaseOrder";
+import FetchPurchaseOrder from "../components/fetch/General/FetchPurchaseOrder";
+import FetchLabourItem from "../components/fetch/Labour/FetchLabourItem";
+import Labour from "../components/fetch/Labour/LabourPurchaseOrder";
+import FetchMaterialItem from "../components/fetch/Material/FetchMaterialItem";
+import MaterialPo from "../components/fetch/Material/MaterialPo";
 import GatewayPage from "../components/gateway/GatewayPage";
 import Home from "../components/Home";
 import Login from "../components/login/LoginPage";
@@ -13,6 +19,12 @@ const routeConfig = [
     { path: '/gateway', element: <GatewayPage /> },
     { path: '/purchase_order', element: <PurchaseOrder /> },
     { path: '/fetch_purchase_order', element: <FetchPurchaseOrder /> },
+    { path: '/fetch_material_po',         element: <MaterialPo /> },
+    { path: '/fetch_material_item',         element: <FetchMaterialItem /> },
+    { path:'/fetch_labour_po',            element:<Labour />},
+    { path:'/fetch_labour_item',          element:<FetchLabourItem />},
+    { path:'/daybook',                    element:<DayBook />},
+    { path:'/daybook_item',               element:<FetchDbItemwise/> },
     { path: '/fetch_item_purchase_order', element: <FetchItemPurchaseOrder /> },
     { path: '/update_purchase_order/:id', element: <PurchaseOrder /> },
     { path: '/customers', element: <CustomerMaster /> },
